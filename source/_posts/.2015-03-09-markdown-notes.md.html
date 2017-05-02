@@ -1,0 +1,803 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Strict//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>D:\Dev\Blog\sevenvoid.blog\blog\source\_posts\.2015-03-09-markdown-notes.md.html</title>
+
+
+<style type="text/css">
+body {
+	color: #333;
+	font: 13px/1.4 "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif;
+	padding: 0;
+	margin: 0;
+}
+
+a {
+	background: transparent;
+	color: #4183c4;
+	text-decoration: none;
+}
+
+a:active,
+a:hover {
+	outline: 0 none;
+	text-decoration: underline;
+}
+
+abbr[title] {
+	border-bottom: 1px dotted;
+}
+
+b,
+strong {
+	font-weight: bold;
+}
+
+dfn {
+	font-style: italic;
+}
+h1 {
+	font-size: 2em;
+	margin: 0.67em 0;
+}
+mark {
+	background: #ff0;
+	color: #000;
+}
+small {
+	font-size: 80%;
+}
+sub, sup {
+	font-size: 75%;
+	line-height: 0;
+	position: relative;
+	vertical-align: baseline;
+}
+sup {
+	top: -0.5em;
+}
+sub {
+	bottom: -0.25em;
+}
+img {
+	border: 0 none;
+}
+svg:not(:root) {
+	overflow: hidden;
+}
+figure {
+	margin: 1em 40px;
+}
+hr {
+	box-sizing: content-box;
+	height: 0;
+}
+
+code,
+kbd,
+pre,
+samp {
+	font-family: monospace,monospace;
+	font-size: 1em;
+}
+
+pre {
+	overflow: auto;
+	font: 12px Consolas,"Liberation Mono",Menlo,Courier,monospace;
+	margin-bottom: 0;
+	margin-top: 0;
+}
+
+.markdown-body {
+	padding: 30px;
+	font-size: 16px;
+	line-height: 1.6;
+	word-wrap: break-word;
+}
+
+.markdown-body>*:first-child {
+	margin-top: 0 !important;
+}
+
+.markdown-body>*:last-child {
+	margin-bottom: 0 !important;
+}
+
+.markdown-body .absent {
+	color: #c00;
+}
+
+.markdown-body .anchor {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	display: block;
+	padding-right: 6px;
+	padding-left: 30px;
+	margin-left: -30px;
+}
+
+.markdown-body .anchor:focus {
+	outline: none;
+}
+
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4,
+.markdown-body h5,
+.markdown-body h6 {
+	position: relative;
+	margin-top: 1em;
+	margin-bottom: 16px;
+	font-weight: bold;
+	line-height: 1.4;
+}
+
+.markdown-body h1 .octicon-link,
+.markdown-body h2 .octicon-link,
+.markdown-body h3 .octicon-link,
+.markdown-body h4 .octicon-link,
+.markdown-body h5 .octicon-link,
+.markdown-body h6 .octicon-link {
+	display: none;
+	color: #000;
+	vertical-align: middle;
+}
+
+.markdown-body h1:hover .anchor,
+.markdown-body h2:hover .anchor,
+.markdown-body h3:hover .anchor,
+.markdown-body h4:hover .anchor,
+.markdown-body h5:hover .anchor,
+.markdown-body h6:hover .anchor {
+	padding-left: 8px;
+	margin-left: -30px;
+	line-height: 1;
+	text-decoration: none;
+}
+
+.markdown-body h1:hover .anchor .octicon-link,
+.markdown-body h2:hover .anchor .octicon-link,
+.markdown-body h3:hover .anchor .octicon-link,
+.markdown-body h4:hover .anchor .octicon-link,
+.markdown-body h5:hover .anchor .octicon-link,
+.markdown-body h6:hover .anchor .octicon-link {
+	display: inline-block;
+}
+
+.markdown-body h1 tt,
+.markdown-body h1 code,
+.markdown-body h2 tt,
+.markdown-body h2 code,
+.markdown-body h3 tt,
+.markdown-body h3 code,
+.markdown-body h4 tt,
+.markdown-body h4 code,
+.markdown-body h5 tt,
+.markdown-body h5 code,
+.markdown-body h6 tt,
+.markdown-body h6 code {
+	font-size: inherit;
+}
+
+.markdown-body h1 {
+	padding-bottom: 0.3em;
+	font-size: 2.25em;
+	line-height: 1.2;
+	border-bottom: 1px solid #eee;
+}
+
+.markdown-body h2 {
+	padding-bottom: 0.3em;
+	font-size: 1.75em;
+	line-height: 1.225;
+	border-bottom: 1px solid #eee;
+}
+
+.markdown-body h3 {
+	font-size: 1.5em;
+	line-height: 1.43;
+}
+
+.markdown-body h4 {
+	font-size: 1.25em;
+}
+
+.markdown-body h5 {
+	font-size: 1em;
+}
+
+.markdown-body h6 {
+	font-size: 1em;
+	color: #777;
+}
+
+.markdown-body p,.markdown-body blockquote,
+.markdown-body ul,.markdown-body ol,
+.markdown-body dl,.markdown-body table,
+.markdown-body pre {
+	margin-top: 0;
+	margin-bottom: 16px;
+}
+
+.markdown-body hr {
+	height: 4px;
+	padding: 0;
+	margin: 16px 0;
+	background-color: #e7e7e7;
+	border: 0 none;
+}
+
+.markdown-body ul,
+.markdown-body ol {
+	padding-left: 2em;
+}
+
+.markdown-body ul.no-list,
+.markdown-body ol.no-list {
+	padding: 0;
+	list-style-type: none;
+}
+
+.markdown-body ul ul,
+.markdown-body ul ol,
+.markdown-body ol ol,
+.markdown-body ol ul {
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+.markdown-body li>p {
+	margin-top: 16px;
+}
+
+.markdown-body dl {
+	padding: 0;
+}
+
+.markdown-body dl dt {
+	padding: 0;
+	margin-top: 16px;
+	font-size: 1em;
+	font-style: italic;
+	font-weight: bold;
+}
+
+.markdown-body dl dd {
+	padding: 0 16px;
+	margin-bottom: 16px;
+}
+
+.markdown-body blockquote {
+	padding: 0 15px;
+	color: #777;
+	border-left: 4px solid #ddd;
+}
+
+.markdown-body blockquote>:first-child {
+	margin-top: 0;
+}
+
+.markdown-body blockquote>:last-child {
+	margin-bottom: 0;
+}
+
+.markdown-body table {
+	display: block;
+	width: 100%;
+	overflow: auto;
+	word-break: normal;
+	word-break: keep-all;
+}
+
+.markdown-body table th {
+	font-weight: bold;
+}
+
+.markdown-body table th,
+.markdown-body table td {
+	padding: 6px 13px;
+	border: 1px solid #ddd;
+}
+
+.markdown-body table tr {
+	background-color: #fff;
+	border-top: 1px solid #ccc;
+}
+
+.markdown-body table tr:nth-child(2n) {
+	background-color: #f8f8f8;
+}
+
+.markdown-body img {
+	max-width: 100%;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+.markdown-body span.frame {
+	display: block;
+	overflow: hidden;
+}
+
+.markdown-body span.frame>span {
+	display: block;
+	float: left;
+	width: auto;
+	padding: 7px;
+	margin: 13px 0 0;
+	overflow: hidden;
+	border: 1px solid #ddd;
+}
+
+.markdown-body span.frame span img {
+	display: block;
+	float: left;
+}
+
+.markdown-body span.frame span span {
+	display: block;
+	padding: 5px 0 0;
+	clear: both;
+	color: #333;
+}
+
+.markdown-body span.align-center {
+	display: block;
+	overflow: hidden;
+	clear: both;
+}
+
+.markdown-body span.align-center>span {
+	display: block;
+	margin: 13px auto 0;
+	overflow: hidden;
+	text-align: center;
+}
+
+.markdown-body span.align-center span img {
+	margin: 0 auto;
+	text-align: center;
+}
+
+.markdown-body span.align-right {
+	display: block;
+	overflow: hidden;
+	clear: both;
+}
+
+.markdown-body span.align-right>span {
+	display: block;
+	margin: 13px 0 0;
+	overflow: hidden;
+	text-align: right;
+}
+
+.markdown-body span.align-right span img {
+	margin: 0;
+	text-align: right;
+}
+
+.markdown-body span.float-left {
+	display: block;
+	float: left;
+	margin-right: 13px;
+	overflow: hidden;
+}
+
+.markdown-body span.float-left span {
+	margin: 13px 0 0;
+}
+
+.markdown-body span.float-right {
+	display: block;
+	float: right;
+	margin-left: 13px;
+	overflow: hidden;
+}
+
+.markdown-body span.float-right>span {
+	display: block;
+	margin: 13px auto 0;
+	overflow: hidden;
+	text-align: right;
+}
+
+.markdown-body code,.markdown-body tt {
+	padding: 0;
+	padding-top: 0.2em;
+	padding-bottom: 0.2em;
+	margin: 0;
+	font-size: 85%;
+	background-color: rgba(0,0,0,0.04);
+	border-radius: 3px;
+}
+
+.markdown-body code:before,
+.markdown-body code:after,
+.markdown-body tt:before,
+.markdown-body tt:after {
+	letter-spacing: -0.2em;
+	content: "\00a0";
+}
+
+.markdown-body code br,
+.markdown-body tt br {
+	display: none;
+}
+
+.markdown-body del code {
+	text-decoration: inherit;
+}
+
+.markdown-body pre>code {
+	padding: 0;
+	margin: 0;
+	font-size: 100%;
+	word-break: normal;
+	white-space: pre;
+	background: transparent;
+	border: 0;
+}
+
+.markdown-body .highlight {
+	margin-bottom: 16px;
+}
+
+.markdown-body .highlight pre,
+.markdown-body pre {
+	padding: 16px;
+	overflow: auto;
+	font-size: 85%;
+	line-height: 1.45;
+	background-color: #f7f7f7;
+	border-radius: 3px;
+}
+
+.markdown-body .highlight pre {
+	margin-bottom: 0;
+	word-break: normal;
+}
+
+.markdown-body pre {
+	word-wrap: normal;
+}
+
+.markdown-body pre code,
+.markdown-body pre tt {
+	display: inline;
+	max-width: initial;
+	padding: 0;
+	margin: 0;
+	overflow: initial;
+	line-height: inherit;
+	word-wrap: normal;
+	background-color: transparent;
+	border: 0;
+}
+
+.markdown-body pre code:before,
+.markdown-body pre code:after,
+.markdown-body pre tt:before,
+.markdown-body pre tt:after {
+	content: normal;
+}
+
+.highlight .pl-coc,
+.highlight .pl-entl,
+.highlight .pl-entm,
+.highlight .pl-eoa,
+.highlight .pl-mai .pl-sf,
+.highlight .pl-mm,
+.highlight .pl-pdv,
+.highlight .pl-sc,
+.highlight .pl-som,
+.highlight .pl-sr,
+.highlight .pl-v,
+.highlight .pl-vpf {
+	color: #0086b3;
+}
+.highlight .pl-eoac,
+.highlight .pl-mdht,
+.highlight .pl-mi1,
+.highlight .pl-mri,
+.highlight .pl-va,
+.highlight .pl-vpu {
+	color: #008080;
+}
+.highlight .pl-c,
+.highlight .pl-pdc {
+	color: #b4b7b4;
+	font-style: italic;
+}
+.highlight .pl-k,
+.highlight .pl-ko,
+.highlight .pl-kolp,
+.highlight .pl-mc,
+.highlight .pl-mr,
+.highlight .pl-ms,
+.highlight .pl-s,
+.highlight .pl-sok,
+.highlight .pl-st {
+	color: #6e5494;
+}
+.highlight .pl-ef,
+.highlight .pl-enf,
+.highlight .pl-enm,
+.highlight .pl-entc,
+.highlight .pl-eoi,
+.highlight .pl-sf,
+.highlight .pl-smc {
+	color: #d12089;
+}
+.highlight .pl-ens,
+.highlight .pl-eoai,
+.highlight .pl-kos,
+.highlight .pl-mh .pl-pdh,
+.highlight .pl-mp,
+.highlight .pl-pde,
+.highlight .pl-stp {
+	color: #458;
+}
+.highlight .pl-enti {
+	color: #d12089;
+	font-weight: bold;
+}
+.highlight .pl-cce,
+.highlight .pl-enc,
+.highlight .pl-kou,
+.highlight .pl-mq {
+	color: #f93;
+}
+.highlight .pl-mp1 .pl-sf {
+	color: #458;
+	font-weight: bold;
+}
+.highlight .pl-cos,
+.highlight .pl-ent,
+.highlight .pl-md,
+.highlight .pl-mdhf,
+.highlight .pl-ml,
+.highlight .pl-pdc1,
+.highlight .pl-pds,
+.highlight .pl-s1,
+.highlight .pl-scp,
+.highlight .pl-sol {
+	color: #df5000;
+}
+.highlight .pl-c1,
+.highlight .pl-cn,
+.highlight .pl-pse,
+.highlight .pl-pse .pl-s2,
+.highlight .pl-vi {
+	color: #a31515;
+}
+.highlight .pl-mb,
+.highlight .pl-pdb {
+	color: #df5000;
+	font-weight: bold;
+}
+.highlight .pl-mi,
+.highlight .pl-pdi {
+	color: #6e5494;
+	font-style: italic;
+}
+.highlight .pl-ms1 {
+	background-color: #f5f5f5;
+}
+.highlight .pl-mdh,
+.highlight .pl-mdi {
+	font-weight: bold;
+}
+.highlight .pl-mdr {
+	color: #0086b3;
+	font-weight: bold;
+}
+.highlight .pl-s2 {
+	color: #333;
+}
+.highlight .pl-ii {
+	background-color: #df5000;
+	color: #fff;
+}
+.highlight .pl-ib {
+	background-color: #f93;
+}
+.highlight .pl-id {
+	background-color: #a31515;
+	color: #fff;
+}
+.highlight .pl-iu {
+	background-color: #b4b7b4;
+}
+.highlight .pl-mo {
+	color: #969896;
+}
+
+</style>
+
+
+<script type="text/javascript">
+
+function getDocumentScrollTop() 
+{
+   var res = document.body.scrollTop || document.documentElement.scrollTop || window.pageYOffset || 0;
+   // alert(res);
+   return res;
+}
+
+function setDocumentScrollTop(ypos) 
+{
+	window.scrollTo(0, ypos);
+}
+
+</script>
+
+
+</head>
+<body class="markdown-body">
+<hr /> 
+<p>title: Markdown语法学习摘要 categories: 程序生活 description: Markdown语法</p> 
+<h2> <a id="tags-markdown" class="anchor" href="#tags-markdown" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>tags: Markdown</h2> 
+<p>这篇文章主要作为对于第一次使用Markdown来进行写作的练习，也是学习<a href="http://wowubuntu.com/markdown/">Markdown语法</a>后，整理的一个简要说明，便于以后的blog写作。</p> 
+<h2> <a id="宗旨" class="anchor" href="#%E5%AE%97%E6%97%A8" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>宗旨</h2> 
+<p>Markdown的目标是易读易写，Markdown的语法目标是成为一种适用于网络的书写语言。</p> 
+<h2> <a id="兼容html" class="anchor" href="#%E5%85%BC%E5%AE%B9html" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>兼容HTML</h2> 
+<p>HTML是一种发布的格式，Markdown是一种书写的格式，Markdown不是想要取代HTML。不在Markdown涵盖范围之内的标签，都可以直接在文档里面用HTML撰写（只要直接加标签即可）。要制约的只有一些 HTML 区块元素――比如 </p>
+<div>
+ 、
+ <pre>、<p> 等标签，必须在前后加上空行与其它内容区隔开，还要求它们的开始标签与结尾标签不能用制表符或空格来缩进。Markdown语法在HTML的区块标签不起作用，在区段(行内）起作用，HTML区段标签在Markdown的段落、列表或是标题里随意使用。</p>
+
+<h2>
+<a id="语法构成" class="anchor" href="#%E8%AF%AD%E6%B3%95%E6%9E%84%E6%88%90" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>语法构成</h2>
+
+<h3>
+<a id="区块元素" class="anchor" href="#%E5%8C%BA%E5%9D%97%E5%85%83%E7%B4%A0" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>区块元素</h3>
+
+<p>1、标题</p>
+
+<p>Markdown支持两种标题的语法：</p>
+
+<p>a、在行首插入1到6个#，对应到标题1到6阶，行尾也可以加入不必对等的#作为美观结束。</p>
+
+<p>b、利用=（最高阶标题）和-（第二阶标题）任何数量的底线形式。列如：</p>
+
+<pre><code>#这是H1#
+
+##这是H2#
+
+这是H1
+=====
+这是H2
+-----
+</code></pre>
+
+<p>2、段落和换行</p>
+
+<p>一个Markdown段落是由一个或多个连续的文本行组成，它的前后要有一个以上的空行，普通段落不该用空格或者制表符来缩进。可以强制使用换行符，也可以使用两个以上空格回车生成<br />标签换行。</p>
+
+<p>3、区块引用 Blockquotes</p>
+
+<p>Markdown支持在区块内使用引用，只需要在行首加入<strong>[&gt;]</strong>标记即可，多层引用可以嵌套，只需根据层次加上不同数量的<strong>[&gt;]</strong>，引用块内也可以使用其他Markdown语法，包括标题，列表，代码区等。 例如：</p>
+
+<pre><code>&gt;####这是一个标题
+&gt;
+&gt;1、 这是第一行
+&gt;
+&gt;2、 这是第二行
+&gt;&gt;1、这是第二行的第一行引用
+&gt;
+&gt;返回到第一行
+</code></pre>
+
+<p>执行后的结果为：</p>
+
+
+  <blockquote>
+
+   <h4> <a id="这是一个标题" class="anchor" href="#%E8%BF%99%E6%98%AF%E4%B8%80%E4%B8%AA%E6%A0%87%E9%A2%98" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>这是一个标题</h4>
+
+
+   <p>1、 这是第一行</p>
+
+
+   <p>2、 这是第二行</p>
+
+
+   <blockquote> 
+    <p>1、这是第二行的第一行引用</p> 
+   </blockquote>
+
+
+   <p>返回到第一行</p>
+
+  </blockquote>
+
+<p>4、列表</p>
+
+<p>Markdown支持有序与无序列表：(标记与字符之间有个空格,标记也可以缩进，但最多3个空格)</p>
+
+<p>a. 无序列表使用*、+、-、号作为列表标记：</p>
+
+</pre>
+ <ul> 
+  <li>red</li> 
+  <li>green</li> 
+  <li> <p>blue</p> <p>b. 有序列表使用数字接着一个英文句点标记：</p> </li> 
+ </ul>
+ <ol> 
+  <li>red</li> 
+  <li>green</li> 
+  <li> <p>blue</p> <p>c. 列表项目内可以加入多个段落，每个项目下的段落都必须缩进4个空格或者一个制表符。</p> <p>d. 列表项目内可以放入引用，引用也需要缩进。</p> <p>e. 列表项目内可以放入代码块，代码块需要缩进两次。</p> </li> 
+ </ol>
+ <p>5、代码区块</p>
+ <p>Markdown支持插入源格式的程序代码，只需要简单的缩进4个空格或者一个制表符即可，在代码区块里面，&amp;、&lt;、&gt;会自动转换成HTML实体，一个代码区块会一直持续到没有缩进的那一行（或是文件结尾）。 在行内需要标记某段代码，可以用反引号<strong>[`]</strong>将代码括起来。</p>
+ <p>6、分隔线</p>
+ <p>可以在一行中用三个以上的*、 -、 _ 来建立一个分隔线，行内不能有其他东西。你也可以在* 或是- 中间插入空格。下面每种写法都可以建立分隔线： ----、 *****、 ________</p>
+ <hr />
+ <hr />
+ <hr />
+ <h3> <a id="区段元素行内" class="anchor" href="#%E5%8C%BA%E6%AE%B5%E5%85%83%E7%B4%A0%E8%A1%8C%E5%86%85" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>区段元素（行内）</h3>
+ <p>1、链接</p>
+ <p>Markdown支持两种形式的链接：行内式，参考式。 不管哪一种形式都需要将链接文字用方括号[]括起来。</p>
+ <ul> 
+  <li>行内式：[链接文字](网络地址 &quot;提示标题&quot;)</li> 
+  <li>参考式： [链接文字][ID]，ID可以用数字，字母，空白或者标点符号标记，并不区分大小写。 
+   <ul> 
+    <li>[ID]: http://... &quot;title&quot;/'title'/(title)</li> 
+   </ul> </li> 
+ </ul>
+ <p>同一主机下的网址可以使用相对路径。Markdown 支持以比较简短的自动链接形式来处理网址和电子邮件信箱，只要是用尖括号包起来， Markdown 就会自动把它转成链接。它也支持隐式链接的形式，即链接的文字等同于参考式链接的标识符。</p>
+ <pre><code>[Google][]
+[Google]: http://www.google.com/ &quot;Google&quot;
+</code></pre>
+ <p>2、图片</p>
+ <p>Markdown 使用一种和链接很相似的语法来标记图片，同样也允许两种样式： 行内式和参考式。</p>
+ <p>行内式的图片语法看起来像是：</p>
+ <pre><code>![Alt text](/path/to/img.jpg)
+
+![Alt text](/path/to/img.jpg &quot;Optional title&quot;)
+</code></pre>
+ <p>详细叙述如下：</p>
+ <p>一个惊叹号 !</p>
+ <p>接着一个方括号，里面放上图片的替代文字</p>
+ <p>接着一个普通括号，里面放上图片的网址，最后还可以用引号包住并加上 选择性的 'title' 文字。</p>
+ <p>参考式的图片语法则长得像这样：</p>
+ <pre><code>![Alt text][id]
+</code></pre>
+ <p>「id」是图片参考的名称，图片参考的定义方式则和链接参考一样：</p>
+ <pre><code>[id]: url/to/image  &quot;Optional title attribute&quot;
+</code></pre>
+ <p>到目前为止， Markdown 还没有办法指定图片的宽高，如果你需要的话，你可以使用普通的 <a href="" target="_blank"><img style="max-width:100%;" /></a> 标签。</p>
+ <p>3、强调</p>
+ <p>Markdown 使用星号（<em>）和底线（_）作为标记强调字词的符号，被 \</em> 或 _ 包围的字词会被转成用 <em> 标签包围，用两个 * 或 _ 包起来的话，则会被转成 <strong>。</strong></em></p>
+ <pre><code>*single asterisks*
+_single underscores_
+**double asterisks**
+__double underscores__
+</code></pre>
+ <p>4、反斜杠</p>
+ <p>Markdown 可以利用反斜杠来插入一些在语法中有其它意义的符号，例如：如果你想要用星号加在文字旁边的方式来做出强调效果（但不用 <em> 标签），你可以在星号的前面加上反斜杠：</em></p>
+ <p>*literal asterisks*</p>
+ <p>Markdown 支持以下这些符号前面加上反斜杠来帮助插入普通的符号：</p>
+ <p>\ 反斜线</p>
+ <p>` 反引号</p>
+ <p>* 星号</p>
+ <p>_ 底线</p>
+ <p>{} 花括号</p>
+ <p>[] 方括号</p>
+ <p>() 括弧</p>
+ <p># 井字号</p>
+ <p>+ 加号</p>
+ <p>- 减号</p>
+ <p>. 英文句点</p>
+ <p>! 惊叹号</p>
+ <table>
+  、                                                
+ </table> 
+</div>
+</body>
+</html>

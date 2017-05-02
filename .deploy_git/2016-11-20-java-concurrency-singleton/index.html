@@ -1,0 +1,704 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Java,并发编程,单例Singleton模式," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="很早以前就想认认真真的学习、吃透Java编程方面的各种原理，并且积累一些经验，一是想要技术更上一层楼，二也是想要找到一个自己想要探索的方向。在自己的认知上，一直认为吃透了基础，才可以选择远方。   ——题记从本文开始将会详细了解一下Java并发编程方法的相关知识，内容的来源可能是自己看书、或者网上的优秀博文，文末都会有相关的参考链接，详细内容可以访问原文。好记性不如烂笔头，自己暂时写不好一篇文章，">
+<meta name="keywords" content="Java,并发编程,单例Singleton模式">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java并发编程系列（一）：Singleton血案">
+<meta property="og:url" content="http://sevenvoid.com/2016-11-20-java-concurrency-singleton/index.html">
+<meta property="og:site_name" content="Sevenvoid&#39;s Blog">
+<meta property="og:description" content="很早以前就想认认真真的学习、吃透Java编程方面的各种原理，并且积累一些经验，一是想要技术更上一层楼，二也是想要找到一个自己想要探索的方向。在自己的认知上，一直认为吃透了基础，才可以选择远方。   ——题记从本文开始将会详细了解一下Java并发编程方法的相关知识，内容的来源可能是自己看书、或者网上的优秀博文，文末都会有相关的参考链接，详细内容可以访问原文。好记性不如烂笔头，自己暂时写不好一篇文章，">
+<meta property="og:updated_time" content="2017-05-02T13:02:21.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java并发编程系列（一）：Singleton血案">
+<meta name="twitter:description" content="很早以前就想认认真真的学习、吃透Java编程方面的各种原理，并且积累一些经验，一是想要技术更上一层楼，二也是想要找到一个自己想要探索的方向。在自己的认知上，一直认为吃透了基础，才可以选择远方。   ——题记从本文开始将会详细了解一下Java并发编程方法的相关知识，内容的来源可能是自己看书、或者网上的优秀博文，文末都会有相关的参考链接，详细内容可以访问原文。好记性不如烂笔头，自己暂时写不好一篇文章，">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"right","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://sevenvoid.com/2016-11-20-java-concurrency-singleton/"/>
+
+  <title> Java并发编程系列（一）：Singleton血案 | Sevenvoid's Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Sevenvoid's Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Java并发编程系列（一）：Singleton血案
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-11-20T00:00:00+08:00" content="2016-11-20">
+              2016-11-20
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/并发编程/" itemprop="url" rel="index">
+                    <span itemprop="name">并发编程</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016-11-20-java-concurrency-singleton/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016-11-20-java-concurrency-singleton/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><blockquote class="blockquote-center">很早以前就想认认真真的学习、吃透Java编程方面的各种原理，并且积累一些经验，一是想要技术更上一层楼，二也是想要找到一个自己想要探索的方向。在自己的认知上，一直认为吃透了基础，才可以选择远方。   ——题记</blockquote><br>从本文开始将会详细了解一下Java并发编程方法的相关知识，内容的来源可能是自己看书、或者网上的优秀博文，文末都会有相关的参考链接，详细内容可以访问原文。好记性不如烂笔头，自己暂时写不好一篇文章，那么试着整理也是一件不可多得的事情，至少认真思考了，也实践了一遍。本文将从一个单例模式开始，看下如何编写正确的并发代码。</p>
+<h1 id="Singleton的习惯使用"><a href="#Singleton的习惯使用" class="headerlink" title="Singleton的习惯使用"></a>Singleton的习惯使用</h1><p>Singleton设计模式可能是被讨论和使用的最广泛的一个设计模式了，在Java编程中，对于单例模式，程序员一般习惯会写成如下形式：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> edu.sevenvoid.jvm.thread;</div><div class="line"><span class="comment">/**</span></div><div class="line"> * <span class="doctag">@author</span> sevenvoid</div><div class="line"> *</div><div class="line"> * 2016年12月4日</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SingletonTest</span> </span>&#123;</div><div class="line">	</div><div class="line">	<span class="keyword">private</span> <span class="keyword">static</span> SingletonTest instance = <span class="keyword">null</span>;</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">private</span> <span class="title">SingletonTest</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="comment">//为了说明并发问题，打印对象创建时的线程名</span></div><div class="line">		System.out.println(<span class="string">"The current thread is : "</span> + Thread.currentThread().getName()); <span class="comment">//</span></div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> SingletonTest <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">if</span>(instance == <span class="keyword">null</span>) &#123;   <span class="comment">//1:A线程执行</span></div><div class="line">			instance = <span class="keyword">new</span> SingletonTest();  <span class="comment">//2:B线程执行</span></div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> instance;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">		<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;=<span class="number">5</span>; i++) &#123;</div><div class="line">			Thread thread = <span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() &#123;</div><div class="line">				<span class="meta">@Override</span></div><div class="line">				<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">					SingletonTest.getInstance();</div><div class="line">				&#125;</div><div class="line">			&#125;);</div><div class="line">			thread.start();</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<a id="more"></a>
+<p>上面代码大家应该都知道，所谓的线程不安全的懒汉单例写法，它有如下几个Singleton的特点(都知道的)：</p>
+<ol>
+<li>私有（private）的构造函数，表明这个类是不可能形成实例了。这主要是怕这个类会有多个实例</li>
+<li>即然这个类是不可能形成实例，那么，我们需要一个静态的方式让其形成实例：getInstance()。注意这个方法是在new自己，因为其可以访问私有的构造函数，所以他是可以保证实例被创建出来的</li>
+<li>在getInstance()中，先做判断是否已形成实例，如果已形成则直接返回，否则创建实例</li>
+<li>所形成的实例保存在自己类中的私有成员中</li>
+<li>我们取实例时，只需要使用Singleton.getInstance()就行了</li>
+</ol>
+<h1 id="Singleton的问题"><a href="#Singleton的问题" class="headerlink" title="Singleton的问题"></a>Singleton的问题</h1><h2 id="并发问题"><a href="#并发问题" class="headerlink" title="并发问题"></a>并发问题</h2><p>在单线程环境下上面的写法确实正确，但大多数时候我们的程序都是并发执行的，因此上面的写法是有严重的问题的，比如：A线程执行代码1的同时，B线程执行代码2，此时，线程A可能看到instance引用的对象还没有初始化。运行上面的并发代码出现如下结果，说明这个类被实例化了多次，也即不再是Singleton了：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">The current thread is : Thread-<span class="number">0</span></div><div class="line">The current thread is : Thread-<span class="number">2</span></div><div class="line">The current thread is : Thread-<span class="number">1</span></div></pre></td></tr></table></figure></p>
+<h2 id="同步问题"><a href="#同步问题" class="headerlink" title="同步问题"></a>同步问题</h2><p>既然涉及到了并发访问，那我们自然而然就想到了同步，比如用synchronized关键字来同步方法或者代码块，如下所示：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SingletonTest</span> </span>&#123;</div><div class="line">	</div><div class="line">	<span class="keyword">private</span> <span class="keyword">static</span> SingletonTest instance = <span class="keyword">null</span>;</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">private</span> <span class="title">SingletonTest</span><span class="params">()</span> </span>&#123;</div><div class="line">		System.out.println(<span class="string">"The current thread is : "</span> + Thread.currentThread().getName());</div><div class="line">	&#125;</div><div class="line">	<span class="comment">//第一种同步方式</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> SingletonTest <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">if</span>(instance == <span class="keyword">null</span>) &#123;     <span class="comment">//C-1-1:A线程执行</span></div><div class="line">			<span class="keyword">synchronized</span>(SingletonTest.class) &#123;  </div><div class="line">				instance = <span class="keyword">new</span> SingletonTest();  <span class="comment">//C-1-2:A线程执行</span></div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> instance;</div><div class="line">	&#125;</div><div class="line">	<span class="comment">//第二种同步方式，当然，这两种方式只能选择一种实现</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> SingletonTest <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">synchronized</span>(SingletonTest.class) &#123;</div><div class="line">			<span class="keyword">if</span>(instance == <span class="keyword">null</span>) &#123;      <span class="comment">//C-2-1:</span></div><div class="line">				instance = <span class="keyword">new</span> SingletonTest();</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> instance;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>我们可以使用多种方式来同步，比如：</p>
+<ol>
+<li>当instance==null时，用synchronized来同步实例的创建</li>
+<li>一进入getInstance()方法就使用synchroznied来同步，或者直接同步方法。</li>
+</ol>
+<p>这两种情况都有些问题，前者的问题在于假设A，B线程都进入了C-1-1判断中，此时只能有一个线程进入同步块，假设A线程进入同步块完成C-1-2单例实例化之后，B线程进入会再次完成单例实例化；后者的问题在于，这样的写法是保证了线程安全，也通过C-2-1保证了只有一个单例实例化,但是由于getInstance()方法做了同步处理，如果getInstance()方法被多个线程频繁调用，synchronized将会导致程序执行性能的下降。那么，有没有更优雅的方案呢？我们也很容易想到将这两者的优势充分结合起来，形成如下的写法：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SingletonTest</span> </span>&#123;</div><div class="line">	</div><div class="line">	<span class="keyword">private</span> <span class="keyword">static</span> SingletonTest instance = <span class="keyword">null</span>; <span class="comment">//2</span></div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">private</span> <span class="title">SingletonTest</span><span class="params">()</span> </span>&#123;</div><div class="line">		System.out.println(<span class="string">"The current thread is : "</span> + Thread.currentThread().getName());</div><div class="line">	&#125;</div><div class="line">	<span class="comment">//double-check</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> SingletonTest <span class="title">getInstance</span><span class="params">()</span> </span>&#123;     <span class="comment">//3</span></div><div class="line">		<span class="keyword">if</span>(instance == <span class="keyword">null</span>) &#123;     <span class="comment">//第一次非空判断       //4</span></div><div class="line">			<span class="keyword">synchronized</span>(SingletonTest.class) &#123;       <span class="comment">//5</span></div><div class="line">				<span class="keyword">if</span>(instance == <span class="keyword">null</span>) &#123;   <span class="comment">//第二次非空判断     //6</span></div><div class="line">					instance = <span class="keyword">new</span> SingletonTest();  <span class="comment">//7问题根源</span></div><div class="line">				&#125;</div><div class="line">			&#125;  <span class="comment">//8</span></div><div class="line">		&#125; <span class="comment">//9</span></div><div class="line">		<span class="keyword">return</span> instance;  <span class="comment">//10</span></div><div class="line">	&#125; <span class="comment">//11</span></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这个版本又叫“双重检查”<strong><em>Double-Check</em></strong>：</p>
+<ol>
+<li>第一次非空判断是说，如果实例创建了，那就不需要同步了，直接返回就好了，因此，可以大幅降低synchronized带来的性能开销。不然，我们就开始同步线程</li>
+<li>第二次非空判断是说，如果被同步的线程中，有一个线程创建了对象，那么别的线程就不用再创建了</li>
+</ol>
+<p>双重检查锁定看起来似乎很完美，我们的问题“好像”是成功解决了，但是它仍旧是一个不完美的优化。</p>
+<h2 id="重排序问题"><a href="#重排序问题" class="headerlink" title="重排序问题"></a>重排序问题</h2><p>上面双重检查之后出现的问题主要在于instance = new SingletonTest()这句，这并非是一个原子操作，事实上在 JVM 中这句话大概做了下面3件事情：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">memory=allocate(); <span class="comment">//1:分配对象的内存空间</span></div><div class="line">initInstance(memory); <span class="comment">//2:初始化对象</span></div><div class="line">instance=memory; <span class="comment">//3:设置instance指向刚分配的内存地址（执行完这步 instance才是非 null了）</span></div></pre></td></tr></table></figure></p>
+<p>上面3行代码中的2和3之间，可能会被重排序（在一些 JVM的即时编译器(JIT)中存在指令重排序的优化），也就是说上面的2和3的顺序是不能保证的。2和3之间重排序之后的执行时序如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">memory=allocate(); <span class="comment">//1:分配对象的内存空间</span></div><div class="line">instance=memory; <span class="comment">//3:设置instance指向刚分配的内存地址（执行完这步 instance才是非 null了）</span></div><div class="line">initInstance(memory); <span class="comment">//2:初始化对象</span></div></pre></td></tr></table></figure></p>
+<p>如果发生重排序，另一个并发执行的线程B就有可能在第4行判断instance不为null。线程B接下来将访问instance所引用的对象，但此时这个对象可能还没有被A线程初始化，在使用时就会出现问题。在知晓问题发生的根源之后，我们可以想出两个办法解决:</p>
+<ol>
+<li>不允许2和3重排序</li>
+<li>允许2和3重排序，但不允许其他线程“看到”这个重排序</li>
+</ol>
+<h1 id="Singleton的解决方案"><a href="#Singleton的解决方案" class="headerlink" title="Singleton的解决方案"></a>Singleton的解决方案</h1><h2 id="基于volatile的解决方案"><a href="#基于volatile的解决方案" class="headerlink" title="基于volatile的解决方案"></a>基于volatile的解决方案</h2><p>对于前面的基于双重检查锁定的方案，只需要做一点小的修改，就可以实现线程安全的延迟初始化：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SingletonTest</span> </span>&#123;</div><div class="line">	</div><div class="line">	<span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">static</span> SingletonTest instance = <span class="keyword">null</span>;   <span class="comment">//volatile修饰</span></div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">private</span> <span class="title">SingletonTest</span><span class="params">()</span> </span>&#123;</div><div class="line">		System.out.println(<span class="string">"The current thread is : "</span> + Thread.currentThread().getName());</div><div class="line">	&#125;</div><div class="line">	<span class="comment">//double-check</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> SingletonTest <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">if</span>(instance == <span class="keyword">null</span>) &#123;</div><div class="line">			<span class="keyword">synchronized</span>(SingletonTest.class) &#123;</div><div class="line">				<span class="keyword">if</span>(instance == <span class="keyword">null</span>) &#123;</div><div class="line">					instance = <span class="keyword">new</span> SingletonTest();</div><div class="line">				&#125;</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> instance;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>使用 volatile有两个作用：</p>
+<ol>
+<li>这个变量不会在多个线程中存在复本，直接从内存读取</li>
+<li>这个关键字会禁止指令重排序优化。也就是说，在 volatile变量的赋值操作后面会有一个内存屏障（生成的汇编代码上），读操作不会被重排序到内存屏障之前</li>
+</ol>
+<p>但是，这个事情仅在Java1.5版后有用，1.5版之前用这个变量也有问题，因为老版本的Java的内存模型是有缺陷的。</p>
+<h2 id="基于类初始化的解决方案"><a href="#基于类初始化的解决方案" class="headerlink" title="基于类初始化的解决方案"></a>基于类初始化的解决方案</h2><p>JVM在类的初始化阶段（即在Class被加载后，且被线程使用之前），会执行类的初始化。在执行类的初始化期间，JVM会去获取多个线程对同一个类的初始化。基于这个特性，实现的示例代码如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SingletonTest</span> </span>&#123;</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">private</span> <span class="title">SingletonTest</span><span class="params">()</span> </span>&#123;</div><div class="line">		System.out.println(<span class="string">"The current thread is : "</span> + Thread.currentThread().getName());</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">InstanceHolder</span> </span>&#123;</div><div class="line">    		<span class="keyword">public</span> <span class="keyword">static</span> SingletonTest instance = <span class="keyword">new</span> SingletonTest();</div><div class="line">    	&#125;</div><div class="line">    </div><div class="line">   	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> SingletonTest <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</div><div class="line">    	<span class="keyword">return</span> InstanceHolder.instance;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这个方案的本质是允许前面伪代码谈到的2和3重排序，但不允许其他线程“看到”这个重排序。在SingletonTest示例代码中，首次执行getInstance()方法的线程将导致InstanceHolder类被初始化。由于Java语言是多线程的，多个线程可能在同一时间尝试去初始化同一个类或接口（比如这里多个线程可能会在同一时刻调用getInstance()方法来初始化InstanceHolder类）。Java语言规定，对于每一个类和接口C，都有一个唯一的初始化锁LC与之对应。从C到LC的映射，由JVM的具体实现去自由实现。JVM在类初始化期间会获取这个初始化锁，并且每个线程至少获取一次锁来确保这个类已经被初始化过了。这个方案没有性能缺陷，也不依赖 JDK 版本。</p>
+<h2 id="基于枚举的完美方案"><a href="#基于枚举的完美方案" class="headerlink" title="基于枚举的完美方案"></a>基于枚举的完美方案</h2><p>上面的版本是旧版《Effective Java》的推荐的方式，而在新版中推荐使用枚举enum来实现：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> edu.sevenvoid.jvm.thread;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * <span class="doctag">@author</span> sevenvoid</div><div class="line"> *</div><div class="line"> * 2016年12月4日</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="keyword">enum</span> SingletonTest &#123;</div><div class="line">	</div><div class="line">	INSTANCE;</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">private</span> <span class="title">SingletonTest</span><span class="params">()</span> </span>&#123;</div><div class="line">		System.out.println(<span class="string">"The current thread is : "</span> + Thread.currentThread().getName());</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doOtherSomething</span><span class="params">()</span> </span>&#123;  <span class="comment">//单例的其他功能</span></div><div class="line">		System.out.println(<span class="string">"Hello thread : "</span> + Thread.currentThread().getName());</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">		</div><div class="line">		<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;=<span class="number">5</span>; i++) &#123;</div><div class="line">			Thread thread = <span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() &#123;</div><div class="line">				<span class="meta">@Override</span></div><div class="line">				<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">					SingletonTest.INSTANCE.doOtherSomething();</div><div class="line">				&#125;</div><div class="line">			&#125;);</div><div class="line">			thread.start();</div><div class="line">		&#125;</div><div class="line"></div><div class="line">	&#125;</div></pre></td></tr></table></figure></p>
+<p>运行上面的程序，从结果可以清楚的看到，实例只被初始化了一次，结果如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">The current thread is : main   <span class="comment">//主线程完成实例化单例</span></div><div class="line">Hello thread : Thread-<span class="number">0</span>     <span class="comment">//其他线程使用</span></div><div class="line">Hello thread : Thread-<span class="number">1</span></div><div class="line">Hello thread : Thread-<span class="number">3</span></div><div class="line">Hello thread : Thread-<span class="number">2</span></div><div class="line">Hello thread : Thread-<span class="number">4</span></div><div class="line">Hello thread : Thread-<span class="number">5</span></div></pre></td></tr></table></figure></p>
+<p>默认枚举实例的创建是线程安全的，所以不需要担心线程安全的问题。但是在枚举中的其他任何方法的线程安全由程序员自己负责。还有防止上面的通过反射机制调用私用构造器。这种单元素的枚举类型已经成为实现Singleton的最佳方法。<br></p>
+<h2 id="Singleton其他问题"><a href="#Singleton其他问题" class="headerlink" title="Singleton其他问题"></a>Singleton其他问题</h2><p>怎么？还有问题？！当然还有，请记住下面这条规则——“无论你的代码写得有多好，其只能在特定的范围内工作，超出这个范围就要出Bug了（左耳朵耗子）”，想一想还有什么情况会让这个我们上面的代码出问题吗？（当然，有些反例可能属于钻牛角尖，不过也不排除其实际可能性。</p>
+<h3 id="Class-Loader"><a href="#Class-Loader" class="headerlink" title="Class Loader"></a>Class Loader</h3><p>JVM规范定义了两种类型的类装载器：启动内装载器(bootstrap)和用户自定义装载器(user-defined class loader)。 在一个JVM中可能存在多个ClassLoader，每个ClassLoader拥有自己的NameSpace。一个ClassLoader只能拥有一个class对象类型的实例，但是不同的ClassLoader可能拥有相同的class对象实例，这时可能产生致命的问题。如ClassLoaderA，装载了类A的类型实例A1，而ClassLoaderB，也装载了类A的对象实例A2。逻辑上讲A1=A2，但是由于A1和A2来自于不同的ClassLoader，它们实际上是完全不同的，如果A中定义了一个静态变量c，则c在不同的ClassLoader中的值是不同的。<br><br>于是，如果Singleton的双重检查版本如果面对着多个Class Loader就会有多个实例同样会被多个Class Loader创建出来，当然，这个有点牵强，不过他确实存在。我们不能在Singleton类中操作Class Loader，在这种情况下，能做的只有是——“保证多个Class Loader不会装载同一个Singleton”。</p>
+<h3 id="序例化"><a href="#序例化" class="headerlink" title="序例化"></a>序例化</h3><p>如果我们的这个Singleton类具有序列化的功能，那么当反序列化的时候，我们将无法控制别人不多次反序列化，这样就会造成多个对象被实例化出来。这种情况下，我们可以利用一下Serializable接口的readResolve()方法，比如：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> <span class="keyword">implements</span> <span class="title">Serializable</span></span></div><div class="line">&#123;</div><div class="line">    ......</div><div class="line">    ......</div><div class="line">    <span class="function"><span class="keyword">protected</span> Object <span class="title">readResolve</span><span class="params">()</span></span></div><div class="line">    &#123;</div><div class="line">        <span class="keyword">return</span> getInstance(); <span class="comment">//或者枚举情况下： return INSTANCE;</span></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h3 id="多个Java虚拟机"><a href="#多个Java虚拟机" class="headerlink" title="多个Java虚拟机"></a>多个Java虚拟机</h3><p>如果我们的程序运行在多个Java的虚拟机中。多个虚拟机这种情况是有点极端，不过还是可能出现，比如EJB或RMI之流的东西。要在这种环境下避免多实例，看来只能通过良好的设计或非技术来解决了。</p>
+<h3 id="volatile变量"><a href="#volatile变量" class="headerlink" title="volatile变量"></a>volatile变量</h3><p>关于volatile这个关键字所声明的变量可以被看作是一种 “程度较轻的同步synchronized”；与 synchronized块相比volatile变量所需的编码较少，并且运行时开销也较少，但是它所能实现的功能也仅是synchronized的一部分。当然，如前面所述，我们需要的Singleton只是在创建的时候线程同步，而后面的读取则不需要同步。所以，volatile变量并不能帮助我们即能解决问题，又有好的性能。而且，这种变量只能在JDK 1.5+版后才能使用。</p>
+<h3 id="关于继承"><a href="#关于继承" class="headerlink" title="关于继承"></a>关于继承</h3><p>是的，继承于Singleton后的子类也有可能造成多实例的问题。不过，因为我们早把Singleton的构造函数声明成了私有的，所以也就杜绝了继承这种事情。</p>
+<h3 id="关于代码重用"><a href="#关于代码重用" class="headerlink" title="关于代码重用"></a>关于代码重用</h3><p>如果我们的系统中有很多个类需要用到这个模式，如果我们在每一个类都中有这样的代码，那么就显得有点傻了。那么，我们是否可以使用一种方法，把这具模式抽象出去?Java下可能比较复杂一些，比如抽象类的模板方法等，但仍旧需要良好的设计。</p>
+<p>上面就是一个单例类的实现方式，一步一步的分析了如何来优雅完美的实现，当然最终还是会有些极端的问题，但只要我们结合业务恰当的实现，是能够完美的解决的。在分析单例这个过程中，提到了重排序、同步等问题，接下来将会进一步讲述。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="http://hugnew.com/?p=851" target="_blank" rel="external">从一个简单的Java单例示例谈谈并发</a><br><a href="http://coolshell.cn/articles/265.html" target="_blank" rel="external">深入浅出单实例Singleton设计模式</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag">#Java</a>
+          
+            <a href="/tags/并发编程/" rel="tag">#并发编程</a>
+          
+            <a href="/tags/单例Singleton模式/" rel="tag">#单例Singleton模式</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016-11-06-computer-digit/" rel="next" title="计算机中数的表示及其运算">
+                <i class="fa fa-chevron-left"></i> 计算机中数的表示及其运算
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016-11-22-java-concurrency-synchronized/" rel="prev" title="Java并发编程系列（二）：深入理解synchronized">
+                Java并发编程系列（二）：深入理解synchronized <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Sevenvoid" />
+          <p class="site-author-name" itemprop="name">Sevenvoid</p>
+          <p class="site-description motion-element" itemprop="description">一只迷茫的猫</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">4</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Singleton的习惯使用"><span class="nav-number">1.</span> <span class="nav-text">Singleton的习惯使用</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Singleton的问题"><span class="nav-number">2.</span> <span class="nav-text">Singleton的问题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#并发问题"><span class="nav-number">2.1.</span> <span class="nav-text">并发问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#同步问题"><span class="nav-number">2.2.</span> <span class="nav-text">同步问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#重排序问题"><span class="nav-number">2.3.</span> <span class="nav-text">重排序问题</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Singleton的解决方案"><span class="nav-number">3.</span> <span class="nav-text">Singleton的解决方案</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#基于volatile的解决方案"><span class="nav-number">3.1.</span> <span class="nav-text">基于volatile的解决方案</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基于类初始化的解决方案"><span class="nav-number">3.2.</span> <span class="nav-text">基于类初始化的解决方案</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基于枚举的完美方案"><span class="nav-number">3.3.</span> <span class="nav-text">基于枚举的完美方案</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Singleton其他问题"><span class="nav-number">3.4.</span> <span class="nav-text">Singleton其他问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Class-Loader"><span class="nav-number">3.4.1.</span> <span class="nav-text">Class Loader</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#序例化"><span class="nav-number">3.4.2.</span> <span class="nav-text">序例化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#多个Java虚拟机"><span class="nav-number">3.4.3.</span> <span class="nav-text">多个Java虚拟机</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#volatile变量"><span class="nav-number">3.4.4.</span> <span class="nav-text">volatile变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#关于继承"><span class="nav-number">3.4.5.</span> <span class="nav-text">关于继承</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#关于代码重用"><span class="nav-number">3.4.6.</span> <span class="nav-text">关于代码重用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考"><span class="nav-number">3.5.</span> <span class="nav-text">参考</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2016 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sevenvoid</span>
+</div>
+
+<div class="powered-by">
+  版权归 Sevenvoid 所有
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+
+
+  
+
+    <script type="text/javascript">
+      var disqus_shortname = 'sevenvoid';
+      var disqus_identifier = '2016-11-20-java-concurrency-singleton/';
+      var disqus_title = "Java并发编程系列（一）：Singleton血案";
+      var disqus_url = 'http://sevenvoid.com/2016-11-20-java-concurrency-singleton/';
+
+      function run_disqus_script(disqus_script){
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+      
+        run_disqus_script('embed.js');
+      
+    </script>
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,773 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Strict//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>D:\Dev\Blog\sevenvoid.blog\blog\source\_posts\.2016-11-22-java-concurrency-synchronized.md.html</title>
+
+
+<style type="text/css">
+body {
+	color: #333;
+	font: 13px/1.4 "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif;
+	padding: 0;
+	margin: 0;
+}
+
+a {
+	background: transparent;
+	color: #4183c4;
+	text-decoration: none;
+}
+
+a:active,
+a:hover {
+	outline: 0 none;
+	text-decoration: underline;
+}
+
+abbr[title] {
+	border-bottom: 1px dotted;
+}
+
+b,
+strong {
+	font-weight: bold;
+}
+
+dfn {
+	font-style: italic;
+}
+h1 {
+	font-size: 2em;
+	margin: 0.67em 0;
+}
+mark {
+	background: #ff0;
+	color: #000;
+}
+small {
+	font-size: 80%;
+}
+sub, sup {
+	font-size: 75%;
+	line-height: 0;
+	position: relative;
+	vertical-align: baseline;
+}
+sup {
+	top: -0.5em;
+}
+sub {
+	bottom: -0.25em;
+}
+img {
+	border: 0 none;
+}
+svg:not(:root) {
+	overflow: hidden;
+}
+figure {
+	margin: 1em 40px;
+}
+hr {
+	box-sizing: content-box;
+	height: 0;
+}
+
+code,
+kbd,
+pre,
+samp {
+	font-family: monospace,monospace;
+	font-size: 1em;
+}
+
+pre {
+	overflow: auto;
+	font: 12px Consolas,"Liberation Mono",Menlo,Courier,monospace;
+	margin-bottom: 0;
+	margin-top: 0;
+}
+
+.markdown-body {
+	padding: 30px;
+	font-size: 16px;
+	line-height: 1.6;
+	word-wrap: break-word;
+}
+
+.markdown-body>*:first-child {
+	margin-top: 0 !important;
+}
+
+.markdown-body>*:last-child {
+	margin-bottom: 0 !important;
+}
+
+.markdown-body .absent {
+	color: #c00;
+}
+
+.markdown-body .anchor {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	display: block;
+	padding-right: 6px;
+	padding-left: 30px;
+	margin-left: -30px;
+}
+
+.markdown-body .anchor:focus {
+	outline: none;
+}
+
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4,
+.markdown-body h5,
+.markdown-body h6 {
+	position: relative;
+	margin-top: 1em;
+	margin-bottom: 16px;
+	font-weight: bold;
+	line-height: 1.4;
+}
+
+.markdown-body h1 .octicon-link,
+.markdown-body h2 .octicon-link,
+.markdown-body h3 .octicon-link,
+.markdown-body h4 .octicon-link,
+.markdown-body h5 .octicon-link,
+.markdown-body h6 .octicon-link {
+	display: none;
+	color: #000;
+	vertical-align: middle;
+}
+
+.markdown-body h1:hover .anchor,
+.markdown-body h2:hover .anchor,
+.markdown-body h3:hover .anchor,
+.markdown-body h4:hover .anchor,
+.markdown-body h5:hover .anchor,
+.markdown-body h6:hover .anchor {
+	padding-left: 8px;
+	margin-left: -30px;
+	line-height: 1;
+	text-decoration: none;
+}
+
+.markdown-body h1:hover .anchor .octicon-link,
+.markdown-body h2:hover .anchor .octicon-link,
+.markdown-body h3:hover .anchor .octicon-link,
+.markdown-body h4:hover .anchor .octicon-link,
+.markdown-body h5:hover .anchor .octicon-link,
+.markdown-body h6:hover .anchor .octicon-link {
+	display: inline-block;
+}
+
+.markdown-body h1 tt,
+.markdown-body h1 code,
+.markdown-body h2 tt,
+.markdown-body h2 code,
+.markdown-body h3 tt,
+.markdown-body h3 code,
+.markdown-body h4 tt,
+.markdown-body h4 code,
+.markdown-body h5 tt,
+.markdown-body h5 code,
+.markdown-body h6 tt,
+.markdown-body h6 code {
+	font-size: inherit;
+}
+
+.markdown-body h1 {
+	padding-bottom: 0.3em;
+	font-size: 2.25em;
+	line-height: 1.2;
+	border-bottom: 1px solid #eee;
+}
+
+.markdown-body h2 {
+	padding-bottom: 0.3em;
+	font-size: 1.75em;
+	line-height: 1.225;
+	border-bottom: 1px solid #eee;
+}
+
+.markdown-body h3 {
+	font-size: 1.5em;
+	line-height: 1.43;
+}
+
+.markdown-body h4 {
+	font-size: 1.25em;
+}
+
+.markdown-body h5 {
+	font-size: 1em;
+}
+
+.markdown-body h6 {
+	font-size: 1em;
+	color: #777;
+}
+
+.markdown-body p,.markdown-body blockquote,
+.markdown-body ul,.markdown-body ol,
+.markdown-body dl,.markdown-body table,
+.markdown-body pre {
+	margin-top: 0;
+	margin-bottom: 16px;
+}
+
+.markdown-body hr {
+	height: 4px;
+	padding: 0;
+	margin: 16px 0;
+	background-color: #e7e7e7;
+	border: 0 none;
+}
+
+.markdown-body ul,
+.markdown-body ol {
+	padding-left: 2em;
+}
+
+.markdown-body ul.no-list,
+.markdown-body ol.no-list {
+	padding: 0;
+	list-style-type: none;
+}
+
+.markdown-body ul ul,
+.markdown-body ul ol,
+.markdown-body ol ol,
+.markdown-body ol ul {
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+.markdown-body li>p {
+	margin-top: 16px;
+}
+
+.markdown-body dl {
+	padding: 0;
+}
+
+.markdown-body dl dt {
+	padding: 0;
+	margin-top: 16px;
+	font-size: 1em;
+	font-style: italic;
+	font-weight: bold;
+}
+
+.markdown-body dl dd {
+	padding: 0 16px;
+	margin-bottom: 16px;
+}
+
+.markdown-body blockquote {
+	padding: 0 15px;
+	color: #777;
+	border-left: 4px solid #ddd;
+}
+
+.markdown-body blockquote>:first-child {
+	margin-top: 0;
+}
+
+.markdown-body blockquote>:last-child {
+	margin-bottom: 0;
+}
+
+.markdown-body table {
+	display: block;
+	width: 100%;
+	overflow: auto;
+	word-break: normal;
+	word-break: keep-all;
+}
+
+.markdown-body table th {
+	font-weight: bold;
+}
+
+.markdown-body table th,
+.markdown-body table td {
+	padding: 6px 13px;
+	border: 1px solid #ddd;
+}
+
+.markdown-body table tr {
+	background-color: #fff;
+	border-top: 1px solid #ccc;
+}
+
+.markdown-body table tr:nth-child(2n) {
+	background-color: #f8f8f8;
+}
+
+.markdown-body img {
+	max-width: 100%;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+.markdown-body span.frame {
+	display: block;
+	overflow: hidden;
+}
+
+.markdown-body span.frame>span {
+	display: block;
+	float: left;
+	width: auto;
+	padding: 7px;
+	margin: 13px 0 0;
+	overflow: hidden;
+	border: 1px solid #ddd;
+}
+
+.markdown-body span.frame span img {
+	display: block;
+	float: left;
+}
+
+.markdown-body span.frame span span {
+	display: block;
+	padding: 5px 0 0;
+	clear: both;
+	color: #333;
+}
+
+.markdown-body span.align-center {
+	display: block;
+	overflow: hidden;
+	clear: both;
+}
+
+.markdown-body span.align-center>span {
+	display: block;
+	margin: 13px auto 0;
+	overflow: hidden;
+	text-align: center;
+}
+
+.markdown-body span.align-center span img {
+	margin: 0 auto;
+	text-align: center;
+}
+
+.markdown-body span.align-right {
+	display: block;
+	overflow: hidden;
+	clear: both;
+}
+
+.markdown-body span.align-right>span {
+	display: block;
+	margin: 13px 0 0;
+	overflow: hidden;
+	text-align: right;
+}
+
+.markdown-body span.align-right span img {
+	margin: 0;
+	text-align: right;
+}
+
+.markdown-body span.float-left {
+	display: block;
+	float: left;
+	margin-right: 13px;
+	overflow: hidden;
+}
+
+.markdown-body span.float-left span {
+	margin: 13px 0 0;
+}
+
+.markdown-body span.float-right {
+	display: block;
+	float: right;
+	margin-left: 13px;
+	overflow: hidden;
+}
+
+.markdown-body span.float-right>span {
+	display: block;
+	margin: 13px auto 0;
+	overflow: hidden;
+	text-align: right;
+}
+
+.markdown-body code,.markdown-body tt {
+	padding: 0;
+	padding-top: 0.2em;
+	padding-bottom: 0.2em;
+	margin: 0;
+	font-size: 85%;
+	background-color: rgba(0,0,0,0.04);
+	border-radius: 3px;
+}
+
+.markdown-body code:before,
+.markdown-body code:after,
+.markdown-body tt:before,
+.markdown-body tt:after {
+	letter-spacing: -0.2em;
+	content: "\00a0";
+}
+
+.markdown-body code br,
+.markdown-body tt br {
+	display: none;
+}
+
+.markdown-body del code {
+	text-decoration: inherit;
+}
+
+.markdown-body pre>code {
+	padding: 0;
+	margin: 0;
+	font-size: 100%;
+	word-break: normal;
+	white-space: pre;
+	background: transparent;
+	border: 0;
+}
+
+.markdown-body .highlight {
+	margin-bottom: 16px;
+}
+
+.markdown-body .highlight pre,
+.markdown-body pre {
+	padding: 16px;
+	overflow: auto;
+	font-size: 85%;
+	line-height: 1.45;
+	background-color: #f7f7f7;
+	border-radius: 3px;
+}
+
+.markdown-body .highlight pre {
+	margin-bottom: 0;
+	word-break: normal;
+}
+
+.markdown-body pre {
+	word-wrap: normal;
+}
+
+.markdown-body pre code,
+.markdown-body pre tt {
+	display: inline;
+	max-width: initial;
+	padding: 0;
+	margin: 0;
+	overflow: initial;
+	line-height: inherit;
+	word-wrap: normal;
+	background-color: transparent;
+	border: 0;
+}
+
+.markdown-body pre code:before,
+.markdown-body pre code:after,
+.markdown-body pre tt:before,
+.markdown-body pre tt:after {
+	content: normal;
+}
+
+.highlight .pl-coc,
+.highlight .pl-entl,
+.highlight .pl-entm,
+.highlight .pl-eoa,
+.highlight .pl-mai .pl-sf,
+.highlight .pl-mm,
+.highlight .pl-pdv,
+.highlight .pl-sc,
+.highlight .pl-som,
+.highlight .pl-sr,
+.highlight .pl-v,
+.highlight .pl-vpf {
+	color: #0086b3;
+}
+.highlight .pl-eoac,
+.highlight .pl-mdht,
+.highlight .pl-mi1,
+.highlight .pl-mri,
+.highlight .pl-va,
+.highlight .pl-vpu {
+	color: #008080;
+}
+.highlight .pl-c,
+.highlight .pl-pdc {
+	color: #b4b7b4;
+	font-style: italic;
+}
+.highlight .pl-k,
+.highlight .pl-ko,
+.highlight .pl-kolp,
+.highlight .pl-mc,
+.highlight .pl-mr,
+.highlight .pl-ms,
+.highlight .pl-s,
+.highlight .pl-sok,
+.highlight .pl-st {
+	color: #6e5494;
+}
+.highlight .pl-ef,
+.highlight .pl-enf,
+.highlight .pl-enm,
+.highlight .pl-entc,
+.highlight .pl-eoi,
+.highlight .pl-sf,
+.highlight .pl-smc {
+	color: #d12089;
+}
+.highlight .pl-ens,
+.highlight .pl-eoai,
+.highlight .pl-kos,
+.highlight .pl-mh .pl-pdh,
+.highlight .pl-mp,
+.highlight .pl-pde,
+.highlight .pl-stp {
+	color: #458;
+}
+.highlight .pl-enti {
+	color: #d12089;
+	font-weight: bold;
+}
+.highlight .pl-cce,
+.highlight .pl-enc,
+.highlight .pl-kou,
+.highlight .pl-mq {
+	color: #f93;
+}
+.highlight .pl-mp1 .pl-sf {
+	color: #458;
+	font-weight: bold;
+}
+.highlight .pl-cos,
+.highlight .pl-ent,
+.highlight .pl-md,
+.highlight .pl-mdhf,
+.highlight .pl-ml,
+.highlight .pl-pdc1,
+.highlight .pl-pds,
+.highlight .pl-s1,
+.highlight .pl-scp,
+.highlight .pl-sol {
+	color: #df5000;
+}
+.highlight .pl-c1,
+.highlight .pl-cn,
+.highlight .pl-pse,
+.highlight .pl-pse .pl-s2,
+.highlight .pl-vi {
+	color: #a31515;
+}
+.highlight .pl-mb,
+.highlight .pl-pdb {
+	color: #df5000;
+	font-weight: bold;
+}
+.highlight .pl-mi,
+.highlight .pl-pdi {
+	color: #6e5494;
+	font-style: italic;
+}
+.highlight .pl-ms1 {
+	background-color: #f5f5f5;
+}
+.highlight .pl-mdh,
+.highlight .pl-mdi {
+	font-weight: bold;
+}
+.highlight .pl-mdr {
+	color: #0086b3;
+	font-weight: bold;
+}
+.highlight .pl-s2 {
+	color: #333;
+}
+.highlight .pl-ii {
+	background-color: #df5000;
+	color: #fff;
+}
+.highlight .pl-ib {
+	background-color: #f93;
+}
+.highlight .pl-id {
+	background-color: #a31515;
+	color: #fff;
+}
+.highlight .pl-iu {
+	background-color: #b4b7b4;
+}
+.highlight .pl-mo {
+	color: #969896;
+}
+
+</style>
+
+
+<script type="text/javascript">
+
+function getDocumentScrollTop() 
+{
+   var res = document.body.scrollTop || document.documentElement.scrollTop || window.pageYOffset || 0;
+   // alert(res);
+   return res;
+}
+
+function setDocumentScrollTop(ypos) 
+{
+	window.scrollTo(0, ypos);
+}
+
+</script>
+
+
+</head>
+<body class="markdown-body">
+<hr /> 
+<p>title: Java并发编程系列（一）：深入理解synchronized categories:</p> 
+<ul> 
+ <li>并发编程 tags:</li> 
+ <li>Java</li> 
+ <li>并发编程</li> 
+</ul> 
+<h2> <a id="--synchronized" class="anchor" href="#--synchronized" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>- synchronized</h2> 
+<blockquote>
+ 很早以前就想认认真真的学习，吃透Java编程方面的各种原理，并且积累一些经验，一是想要技术更上一层楼，二也是想要找到一个自己想要探索的方向。在自己的认知上，一直认为吃透了基础，才可以选择远方。 ——题记
+</blockquote> 
+<h1> <a id="synchronized-使用" class="anchor" href="#synchronized-%E4%BD%BF%E7%94%A8" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>synchronized 使用</h1> 
+<p>最开始我们接触Java并发编程的时候，就知道如果想要实现同步，synchronized一直是元老级角色，synchronized是Java中的关键字，是一种同步锁，而Java中的每一个对象都可以作为锁。它修饰的对象有以下几种： 1. 修饰一个代码块，被修饰的代码块称为同步语句块，其作用的范围是大括号{}括起来的代码，作用的对象是调用这个代码块的对象； 2. 修饰一个方法，被修饰的方法称为同步方法，其作用的范围是整个方法，作用的对象是调用这个方法的对象； 3. 修饰一个静态的方法，其作用的范围是整个静态方法，作用的对象是这个类的所有对象； 4. 修饰一个类，其作用的范围是synchronized后面括号括起来的部分，作用的对象是这个类的所有对象，一般同静态的方法一起考虑。<br /></p> 
+<p>结合上面的修饰类型它又有如下的特性：<br /> 1. 当修饰一个代码块或者方法时，不同的对象锁（即一个对象的不同实例）的执行是互相不影响的，同一对象锁的多线程只能同步阻塞执行； 2. 当访问一个对象的非同步方法时，不需要获取对象锁，也即不会被阻塞执行； 3. 一个静态方法的对象锁是该类的Class对象，因此一个类的不同实例都具有同样的锁对象，对同步方法的执行均需要同步阻塞。</p> 
+<p>如下所示：</p> 
+<p>1、当两个线程使用同一个对象锁并发访问时，将会阻塞执行<br /></p> 
+<div class="highlight highlight-source-java">
+ <pre><span class="pl-k">package</span> <span class="pl-smi">edu.sevenvoid.jvm.thread</span>;
+<span class="pl-c">/**</span>
+<span class="pl-c"> * @author sevenvoid</span>
+<span class="pl-c"> *</span>
+<span class="pl-c"> * 2016年11月17日</span>
+<span class="pl-c"> */</span>
+<span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">SynchronizedTest</span> <span class="pl-k">implements</span> <span class="pl-e">Runnable</span>{
+    <span class="pl-k">private</span> <span class="pl-k">long</span> i <span class="pl-k">=</span> <span class="pl-c1">0</span>;
+    <span class="pl-k">public</span> <span class="pl-k">synchronized</span> <span class="pl-k">long</span> <span class="pl-en">inCrementWithSynchronizedMethod</span>() {
+        i<span class="pl-k">++</span>;
+        <span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">&quot;</span>The thread name : <span class="pl-pds">&quot;</span></span> <span class="pl-k">+</span> <span class="pl-smi">Thread</span><span class="pl-k">.</span>currentThread()<span class="pl-k">.</span>getName() <span class="pl-k">+</span> <span class="pl-s"><span class="pl-pds">&quot;</span>  i = <span class="pl-pds">&quot;</span></span> <span class="pl-k">+</span> i);
+        <span class="pl-k">return</span> i;
+    }
+    <span class="pl-k">@Override</span>
+    <span class="pl-k">public</span> <span class="pl-k">void</span> <span class="pl-en">run</span>() {
+        <span class="pl-k">for</span>(<span class="pl-k">int</span> i<span class="pl-k">=</span><span class="pl-c1">0</span>; i<span class="pl-k">&lt;</span><span class="pl-c1">2</span>; i<span class="pl-k">++</span>) {
+            inCrementWithSynchronizedMethod();
+        }
+    }
+    <span class="pl-k">public</span> <span class="pl-k">static</span> <span class="pl-k">void</span> <span class="pl-en">main</span>(<span class="pl-smi">String</span> <span class="pl-v">arg</span>[]) {
+        <span class="pl-smi">SynchronizedTest</span> synchronizedTest <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">SynchronizedTest</span>();
+        <span class="pl-smi">Thread</span> thread1 <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">Thread</span>(synchronizedTest);
+        <span class="pl-smi">Thread</span> thread2 <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">Thread</span>(synchronizedTest);
+        thread1<span class="pl-k">.</span>start();
+        thread2<span class="pl-k">.</span>start();
+    }
+}</pre>
+</div> 
+<p>输出结果如下所示：表明使用同一个对象锁时，多线程将会同步执行。</p> 
+<div class="highlight highlight-source-java">
+ <pre><span class="pl-smi">The</span> thread name <span class="pl-k">:</span> <span class="pl-smi">Thread</span><span class="pl-k">-</span><span class="pl-c1">0</span>  j <span class="pl-k">=</span> <span class="pl-c1">1</span>
+<span class="pl-smi">The</span> thread name <span class="pl-k">:</span> <span class="pl-smi">Thread</span><span class="pl-k">-</span><span class="pl-c1">0</span>  j <span class="pl-k">=</span> <span class="pl-c1">2</span>
+<span class="pl-smi">The</span> thread name <span class="pl-k">:</span> <span class="pl-smi">Thread</span><span class="pl-k">-</span><span class="pl-c1">1</span>  j <span class="pl-k">=</span> <span class="pl-c1">3</span>
+<span class="pl-smi">The</span> thread name <span class="pl-k">:</span> <span class="pl-smi">Thread</span><span class="pl-k">-</span><span class="pl-c1">1</span>  j <span class="pl-k">=</span> <span class="pl-c1">4</span></pre>
+</div> 
+<p>2、当两个线程使用不同的实例对象访问时，将互相不受影响，将main方法修改成如下所示：</p> 
+<div class="highlight highlight-source-java">
+ <pre><span class="pl-smi">SynchronizedTest</span> synchronizedTest1 <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">SynchronizedTest</span>();
+<span class="pl-smi">SynchronizedTest</span> synchronizedTest2 <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">SynchronizedTest</span>();
+<span class="pl-smi">Thread</span> thread1 <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">Thread</span>(synchronizedTest1);
+<span class="pl-smi">Thread</span> thread2 <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">Thread</span>(synchronizedTest2);
+thread1<span class="pl-k">.</span>start();
+thread2<span class="pl-k">.</span>start();</pre>
+</div> 
+<p>输出结果如下所示：表明使用不同对象锁时，多线程将不会同步执行。</p> 
+<div class="highlight highlight-source-java">
+ <pre><span class="pl-smi">The</span> thread name <span class="pl-k">:</span> <span class="pl-smi">Thread</span><span class="pl-k">-</span><span class="pl-c1">0</span>  i <span class="pl-k">=</span> <span class="pl-c1">1</span>
+<span class="pl-smi">The</span> thread name <span class="pl-k">:</span> <span class="pl-smi">Thread</span><span class="pl-k">-</span><span class="pl-c1">0</span>  i <span class="pl-k">=</span> <span class="pl-c1">2</span>
+<span class="pl-smi">The</span> thread name <span class="pl-k">:</span> <span class="pl-smi">Thread</span><span class="pl-k">-</span><span class="pl-c1">1</span>  i <span class="pl-k">=</span> <span class="pl-c1">1</span>
+<span class="pl-smi">The</span> thread name <span class="pl-k">:</span> <span class="pl-smi">Thread</span><span class="pl-k">-</span><span class="pl-c1">1</span>  i <span class="pl-k">=</span> <span class="pl-c1">2</span></pre>
+</div> 
+<p>对于同步代码块，结论是相同的，区别就在于同步代码块时可以显示的传入一个锁对象，并不一定是当前的类对象。<br /> 3、当两个线程并发访问同步的静态方法时，由于锁对象是同一个class对象，因此将会同步执行：</p> 
+<div class="highlight highlight-source-java">
+ <pre><span class="pl-k">package</span> <span class="pl-smi">edu.sevenvoid.jvm.thread</span>;
+<span class="pl-c">/**</span>
+<span class="pl-c"> * @author sevenvoid</span>
+<span class="pl-c"> *</span>
+<span class="pl-c"> * 2016年11月17日</span>
+<span class="pl-c"> */</span>
+<span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">SynchronizedTest</span> <span class="pl-k">implements</span> <span class="pl-e">Runnable</span>{
+<span class="pl-k">private</span> <span class="pl-k">static</span> <span class="pl-k">long</span> j <span class="pl-k">=</span> <span class="pl-c1">0</span>;
+<span class="pl-k">public</span> <span class="pl-k">synchronized</span> <span class="pl-k">static</span> <span class="pl-k">long</span> <span class="pl-en">inCrementWithSynchronizedStatic</span>() {
+    j<span class="pl-k">++</span>;
+    <span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">&quot;</span>The thread name : <span class="pl-pds">&quot;</span></span> <span class="pl-k">+</span> <span class="pl-smi">Thread</span><span class="pl-k">.</span>currentThread()<span class="pl-k">.</span>getName() <span class="pl-k">+</span> <span class="pl-s"><span class="pl-pds">&quot;</span>  j = <span class="pl-pds">&quot;</span></span> <span class="pl-k">+</span> j);
+    <span class="pl-k">return</span> j;
+}
+<span class="pl-k">@Override</span>
+<span class="pl-k">public</span> <span class="pl-k">void</span> <span class="pl-en">run</span>() {
+    <span class="pl-k">for</span>(<span class="pl-k">int</span> i<span class="pl-k">=</span><span class="pl-c1">0</span>; i<span class="pl-k">&lt;</span><span class="pl-c1">2</span>; i<span class="pl-k">++</span>) {
+        inCrementWithSynchronizedStatic();
+    }
+}
+<span class="pl-k">public</span> <span class="pl-k">static</span> <span class="pl-k">void</span> <span class="pl-en">main</span>(<span class="pl-smi">String</span> <span class="pl-v">arg</span>[]) {
+    <span class="pl-smi">SynchronizedTest</span> synchronizedTest1 <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">SynchronizedTest</span>();
+    <span class="pl-smi">SynchronizedTest</span> synchronizedTest2 <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">SynchronizedTest</span>();
+    <span class="pl-smi">Thread</span> thread1 <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">Thread</span>(synchronizedTest1);
+    <span class="pl-smi">Thread</span> thread2 <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">Thread</span>(synchronizedTest2);
+    thread1<span class="pl-k">.</span>start();
+    thread2<span class="pl-k">.</span>start();
+}
+}</pre>
+</div> 
+<p>输出结果如下所示：表明对于同步静态方法，锁对象将会是Class对象，所有线程访问均需要同步执行</p> 
+<div class="highlight highlight-source-java">
+ <pre><span class="pl-smi">The</span> thread name <span class="pl-k">:</span> <span class="pl-smi">Thread</span><span class="pl-k">-</span><span class="pl-c1">0</span>  j <span class="pl-k">=</span> <span class="pl-c1">1</span>
+<span class="pl-smi">The</span> thread name <span class="pl-k">:</span> <span class="pl-smi">Thread</span><span class="pl-k">-</span><span class="pl-c1">0</span>  j <span class="pl-k">=</span> <span class="pl-c1">2</span>
+<span class="pl-smi">The</span> thread name <span class="pl-k">:</span> <span class="pl-smi">Thread</span><span class="pl-k">-</span><span class="pl-c1">1</span>  j <span class="pl-k">=</span> <span class="pl-c1">3</span>
+<span class="pl-smi">The</span> thread name <span class="pl-k">:</span> <span class="pl-smi">Thread</span><span class="pl-k">-</span><span class="pl-c1">1</span>  j <span class="pl-k">=</span> <span class="pl-c1">4</span></pre>
+</div> 
+<h1> <a id="synchronized原理" class="anchor" href="#synchronized%E5%8E%9F%E7%90%86" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>synchronized原理</h1> 
+<p>数据同步需要依赖锁，那锁的同步又依赖谁？synchronized给出的答案是在软件层面依赖JVM。</p> 
+<h2> <a id="对象监视器monitor" class="anchor" href="#%E5%AF%B9%E8%B1%A1%E7%9B%91%E8%A7%86%E5%99%A8monitor" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>对象监视器（monitor）</h2> 
+<p>Java中同步是通过监视器模型来实现的，JAVA中的监视器实际是一个代码块，这段代码块同一时刻只允许被一个线程执行。线程要想执行这段代码块的唯一方式是获得监视器。监视器有两种同步方式：互斥与协作。多线程环境下线程之间如果需要共享数据，需要解决互斥访问数据的问题，监视器可以确保监视器上的数据在同一时刻只会有一个线程在访问。什么时候需要协作？比如：一个线程向缓冲区写数据，另一个线程从缓冲区读数据，如果读线程发现缓冲区为空就会等待，当写线程向缓冲区写入数据，就会唤醒读线程，这里读线程和写线程就是一个合作关系。JVM通过Object类的wait方法来使自己等待，在调用wait方法后，该线程会释放它持有的监视器，直到其他线程通知它才有执行的机会。一个线程调用notify方法通知在等待的线程，这个等待的线程并不会马上执行，而是要通知线程释放监视器后，它重新获取监视器才有执行的机会。如果刚好唤醒的这个线程需要的监视器被其他线程抢占，那么这个线程会继续等待。object类中的notifyAll方法可以解决这个问题，它可以唤醒所有等待的线程，总有一个线程执行。 <a href="/images/2016-11/java_object_monitor.jpg" target="_blank"><img src="/images/2016-11/java_object_monitor.jpg" alt="" style="max-width:100%;" /></a> 如上图所示，一个线程通过1号门进入Entry Set(入口区),如果在入口区没有线程等待，那么这个线程就会获取监视器成为监视器的owner，然后执行监视区域的代码。如果在入口区中有其它线程在等待，那么新来的线程也会和这些线程一起等待。线程在持有监视器的过程中，有两个选择，一个是正常执行监视器区域的代码，释放监视器，通过5号门退出监视器；还有可能等待某个条件的出现，于是它会通过3号门到Wait Set(等待区)休息，直到相应的条件满足后再通过4号门进入重新获取监视器再执行。 注意：当一个线程释放监视器时，在入口区和等待区的等待线程都会去竞争监视器，如果入口区的线程赢了，会从2号门进入；如果等待区的线程赢了会从4号门进入。只有通过3号门才能进入等待区，在等待区中的线程只有通过4号门才能退出等待区，也就是说一个线程只有在持有监视器时才能执行wait操作，处于等待的线程只有再次获得监视器才能退出等待状态。</p> 
+<h2> <a id="对象锁" class="anchor" href="#%E5%AF%B9%E8%B1%A1%E9%94%81" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>对象锁</h2> 
+<p>JVM中的一些数据，比如堆和方法区会被所有线程共享。Java中每个对象和类实际上都有一把锁(监视器)与之相关联，对于对象来说，监视的是这个对象的实例变量，对于类来说，监视的是类变量，如果一个对象没有实例变量，就什么也不监视。当虚拟机装载类时，会创建一个Class类的实例，锁住一个类实际上锁住的是这个类对应的Class类的实例。对象锁是可重入的，也就是说对一个对象或者类上的锁可以累加。当然，必须是同一线程才可重入<br /> 在Java中有两种监视区域：同步方法和同步块，这两种监视区域都和一个引入对象相关联，当到达这个监视区域时，JVM就会锁住这个引用对象，不论它是怎么离开的，都会释放这个引用对象上的锁。Java程序员不能自己加对象锁，对象锁是JVM内部机制，只需要编写同步方法或者同步块即可，操作监视区域时JVM会自动帮你上锁或者释放锁。<br /> 从JVM规范中可以看到synchronized在JVM里的实现原理，在字节码层面上，JVM基于进入和退出Monitor对象来实现方法同步和代码块同步，但两者的实现细节不一样。代码块同步是使用monitorenter和monitorexit指令实现的，而方法同步是使用另外一种方式实现的，细节在JVM规范里并没有详细说明。但是，方法的同步同样可以使用这两个指令来实现。monitorenter指令是在编译后插入到同步代码块的开始位置，而monitorexit是插入到方法结束处和异常处，JVM要保证每个monitorenter必须有对应的monitorexit与之配对。任何对象都有一个monitor与之关联，当且一个monitor被持有后，它将处于锁定状态。线程执行到monitorenter指令时，将会尝试获取对象所对应的monitor的所有权，即尝试获得对象的锁。 具体的例子如上所示。</p> 
+<h2> <a id="对象头" class="anchor" href="#%E5%AF%B9%E8%B1%A1%E5%A4%B4" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>对象头</h2> 
+<p>实际上锁(monitor)是存在Java对象头里的。如果对象是数组类型，则虚拟机用3个Word（字宽）存储对象头，如果对象是非数组类型，则用2字宽存储对象头。在32位虚拟机中，一字宽等于四字节，即32bit。 <a href="/images/2016-11/java_markword_01.png" target="_blank"><img src="/images/2016-11/java_markword_01.png" alt="" style="max-width:100%;" /></a> Java对象头里的Mark Word里默认存储对象的HashCode，分代年龄和锁标记位。32位JVM的Mark Word的默认存储结构如下： <a href="/images/2016-11/java_markword_02.png" target="_blank"><img src="/images/2016-11/java_markword_02.png" alt="" style="max-width:100%;" /></a> 在运行期间Mark Word里存储的数据会随着锁标志位的变化而变化。Mark Word可能变化为存储以下4种数据： <a href="/images/2016-11/java_markword_03.png" target="_blank"><img src="/images/2016-11/java_markword_03.png" alt="" style="max-width:100%;" /></a> 在64位虚拟机下，Mark Word是64bit大小的，其存储结构如下：对象头占8字节，除此之外对象数据类型指针占8字节，开启指针压缩占4字节。 <a href="/images/2016-11/java_markword_04.png" target="_blank"><img src="/images/2016-11/java_markword_04.png" alt="" style="max-width:100%;" /></a></p> 
+<h2> <a id="锁升级与优化" class="anchor" href="#%E9%94%81%E5%8D%87%E7%BA%A7%E4%B8%8E%E4%BC%98%E5%8C%96" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>锁升级与优化</h2> 
+<p>在Java SE1.6之前synchronized加锁同步是很耗性能的，Java SE1.6为了减少获得锁和释放锁带来的性能消耗，引入了“偏向锁”和“轻量级锁”，在Java SE1.6中，锁一共有4种状态，级别从低到高依次是：无锁状态、偏向锁状态、轻量级锁状态和重量级锁状态，这几个状态会随着竞争情况逐渐升级。锁可以升级但不能降级，意味着偏向锁升级成轻量级锁后不能降级成偏向锁。这种锁升级却不能降级的策略，目的是为了提高获得锁和释放锁的效率。同时也引入了自旋自适应锁，锁粗化，锁消除的措施来提升锁的性能，经过优化之后的synchronized的使用建议是，能使用synchronized实现的同步，推荐使用synchronized关键字来实现。 <a href="/images/2016-11/java_synchronized_01.png" target="_blank"><img src="/images/2016-11/java_synchronized_01.png" alt="" style="max-width:100%;" /></a></p> 
+<h3> <a id="轻量级锁" class="anchor" href="#%E8%BD%BB%E9%87%8F%E7%BA%A7%E9%94%81" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>轻量级锁</h3> 
+<p>轻量级锁是JDK 1.6之中加入的新型锁机制， 它名字中的“ 轻量级” 是相对于使用操作系统互斥量来实现的传统锁而言的， 因此传统的锁机制就称为“ 重量级” 锁。 首先需要强调一点的是， 轻量级锁并不是用来代替重量级锁的， 它的本意是在没有多线程竞争的前提下， 减少传统的重量级锁使用操作系统互斥量产生的性能消耗。<br /> 要理解轻量级锁，就需要首先知道前面所说的对象头的数据结构，以及在代码执行过程中Mark Word结构的变化：对象头信息是与对象自身定义的数据无关的额外存储成本， 考虑到虚拟机的空间效率， Mark Word被设计成一个非固定的数据结构以便在极小的空间内存储尽量多的信息， 它会根据对象的状态复用自己的存储空间。 例如， 在32位的HotSpot虚拟机中对象未被锁定的状态下， Mark Word的32bit空间中的25bit用于存储对象哈希码（ HashCode） ， 4bit用于存储对象分代年龄， 2bit用于存储锁标志位， 1bit固定为0， 在其他状态（ 轻量级锁定、重量级锁定、 GC标记、 可偏向） 下对象的存储内容如上图所示。 轻量级锁加锁：在代码进入同步块的时候， 如果此同步对象没有被锁定（ 锁标志位为“ 01” 状态） ， 虚拟机首先将在当前线程的栈帧中建立一个名为锁记录（ Lock Record） 的空间， 用于存储锁对象目前的Mark Word的拷贝（ 官方把这份拷贝加了一个Displaced前缀， 即Displaced Mark Word） ， 这时候线程堆栈与对象头的状态如图所示： <a href="/images/2016-11/java_synchronized_03.png" target="_blank"><img src="/images/2016-11/java_synchronized_03.png" alt="" style="max-width:100%;" /></a> 然后， 虚拟机将使用CAS操作尝试将对象的Mark Word更新为指向Lock Record的指针。 如果这个更新动作成功了， 那么这个线程就拥有了该对象的锁， 并且对象Mark Word的锁标志位（ Mark Word的最后2bit） 将转变为“00” ， 即表示此对象处于轻量级锁定状态， 这时候线程堆栈与对象头的状态如图所示： <a href="/images/2016-11/java_synchronized_04.png" target="_blank"><img src="/images/2016-11/java_synchronized_04.png" alt="" style="max-width:100%;" /></a> 如果这个更新操作失败了， 虚拟机首先会检查对象的Mark Word是否指向当前线程的栈帧， 如果只说明当前线程已经拥有了这个对象的锁， 那就可以直接进入同步块继续执行， 否则说明这个锁对象已经被其他线程抢占了，当前线程便尝试使用自旋来获取锁。 如果有两条以上的线程争用同一个锁， 那轻量级锁就不再有效， 要膨胀为重量级锁， 线程栈帧中的锁标志的状态值变为“10”， Mark Word中存储的就是指向重量级锁（ 互斥量） 的指针， 后面等待锁的线程也要进入阻塞状态。<br /> 轻量级锁解锁：上面描述的是轻量级锁的加锁过程， 它的解锁过程也是通过CAS操作来进行的， 如果对象的Mark Word仍然指向着线程的锁记录， 那就用CAS操作把对象当前的Mark Word和线程中复制的Displaced Mark Word替换回来， 如果替换成功， 整个同步过程就完成了。 如果替换失败， 说明有其他线程尝试过获取该锁， 并且在释放锁的同时， 唤醒被挂起的线程。 <a href="/images/2016-11/java_synchronized_05.png" target="_blank"><img src="/images/2016-11/java_synchronized_05.png" alt="" style="max-width:100%;" /></a> 因为自旋会消耗CPU，为了避免无用的自旋（比如获得锁的线程被阻塞住了），一旦锁升级成重量级锁，就不会再恢复到轻量级锁状态。当锁处于这个状态下，其他线程试图获取锁时，都会被阻塞住，当持有锁的线程释放锁之后会唤醒这些线程，被唤醒的线程就会进行新一轮的夺锁之争。<br /> 轻量级锁能提升程序同步性能的依据是“ 对于绝大部分的锁， 在整个同步周期内都是不存在竞争的” ， 这是一个经验数据。 如果没有竞争， 轻量级锁使用CAS操作避免了使用互斥量的开销， 但如果存在锁竞争， 除了互斥量的开销外， 还额外发生了CAS操作， 因此在有竞争的情况下， 轻量级锁会比传统的重量级锁更慢。</p> 
+<h3> <a id="偏向锁" class="anchor" href="#%E5%81%8F%E5%90%91%E9%94%81" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>偏向锁</h3> 
+<p>偏向锁也是JDK 1.6中引入的一项锁优化， 它的目的是消除数据在无竞争情况下的同步原语， 进一步提高程序的运行性能。 如果说轻量级锁是在无竞争的情况下使用CAS操作去消除同步使用的互斥量， 那偏向锁就是在无竞争的情况下把整个同步都消除掉， 连CAS操作都不做了。当一个线程访问同步块并获取锁时，会在对象头和栈帧中的锁记录里存储锁偏向的线程ID，以后该线程在进入和退出同步块时不需要花费CAS操作来加锁和解锁，而只需简单的测试一下对象头的Mark Word里是否存储着指向当前线程的偏向锁，如果测试成功，表示线程已经获得了锁，如果测试失败，则需要再测试下Mark Word中偏向锁的标识是否设置成1（表示当前是偏向锁），如果没有设置，则使用CAS竞争锁，如果设置了，则尝试使用CAS将对象头的偏向锁指向当前线程(这里就出现了竞争了)。当有另外一个线程去尝试获取这个锁时， 偏向模式就宣告结束。 根据锁对象目前是否处于被锁定的状态， 撤销偏向（ Revoke Bias） 后恢复到未锁定（ 标志位为“01”） 或轻量级锁定（ 标志位为“00” ）的状态（这里有个疑问即两张情况会如何选择？）， 后续的同步操作就如上面介绍的轻量级锁那样执行。 <br /> 偏向锁的撤销：偏向锁使用了一种等到竞争出现才释放锁的机制，所以当其他线程尝试竞争偏向锁时，持有偏向锁的线程才会释放锁。偏向锁的撤销，需要等待全局安全点（在这个时间点上没有字节码正在执行）（也就是需要等待同步代码块执行完之后才可以），它会首先暂停拥有偏向锁的线程，然后检查持有偏向锁的线程是否活着，如果线程不处于活动状态，则将对象头设置成无锁状态，如果线程仍然活着，拥有偏向锁的栈会被执行，遍历偏向对象的锁记录，栈中的锁记录和对象头的Mark Word要么重新偏向于其他线程，要么恢复到无锁或者标记对象不适合作为偏向锁，最后唤醒暂停的线程。下图中的线程1演示了偏向锁初始化的流程，线程2演示了偏向锁撤销的流程。 <a href="/images/2016-11/java_synchronized_02.png" target="_blank"><img src="/images/2016-11/java_synchronized_02.png" alt="" style="max-width:100%;" /></a> 偏向锁、 轻量级锁的状态转化及对象Mark Word的关系如图所示。 <a href="/images/2016-11/java_synchronized_06.png" target="_blank"><img src="/images/2016-11/java_synchronized_06.png" alt="" style="max-width:100%;" /></a> 关闭偏向锁：偏向锁在Java 6和Java 7里是默认启用的，但是它在应用程序启动几秒钟之后才激活，如有必要可以使用JVM参数来关闭延迟-XX：BiasedLockingStartupDelay = 0。如果你确定自己应用程序里所有的锁通常情况下处于竞争状态，可以通过JVM参数关闭偏向锁-XX:-UseBiasedLocking=false，那么默认会进入轻量级锁状态。</p> 
+<h3> <a id="自旋锁与自适应自旋" class="anchor" href="#%E8%87%AA%E6%97%8B%E9%94%81%E4%B8%8E%E8%87%AA%E9%80%82%E5%BA%94%E8%87%AA%E6%97%8B" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>自旋锁与自适应自旋</h3> 
+<p>互斥同步对性能最大的影响是阻塞的实现， 挂起线程和恢复线程的操作都需要转入内核态中完成， 这些操作给系统的并发性能带来了很大的压力。 同时， 虚拟机的开发团队也注意到在许多应用上， 共享数据的锁定状态只会持续很短的一段时间， 为了这段时间去挂起和恢复线程并不值得。 如果物理机器有一个以上的处理器， 能让两个或以上的线程同时并行执行， 我们就可以让后面请求锁的那个线程“ 稍等一下”， 但不放弃处理器的执行时间， 看看持有锁的线程是否很快就会释放锁。 为了让线程等待， 我们只需让线程执行一个忙循环（ 自旋） ， 这项技术就是所谓的自旋锁。 可以使用-XX： +UseSpinning参数来开启， 在JDK1.6中就默认开启了。 自旋等待不能代替阻塞， 且先不说对处理器数量的要求， 自旋等待本身虽然避免了线程切换的开销， 但它是要占用处理器时间的， 因此， 如果锁被占用的时间很短， 自旋等待的效果就会非常好， 反之， 如果锁被占用的时间很长， 那么自旋的线程只会白白消耗处理器资源， 而不会做任何有用的工作， 反而会带来性能上的浪费。 因此， 自旋等待的时间必须要有一定的限度， 如果自旋超过了限定的次数仍然没有成功获得锁， 就应当使用传统的方式去挂起线程了。 自旋次数的默认值是10次， 用户可以使用参数-XX：PreBlockSpin来更改。在JDK 1.6中引入了自适应的自旋锁。 自适应意味着自旋的时间不再固定了， 而是由前一次在同一个锁上的自旋时间及锁的拥有者的状态来决定。 如果在同一个锁对象上， 自旋等待刚刚成功获得过锁， 并且持有锁的线程正在运行中， 那么虚拟机就会认为这次自旋也很有可能再次成功， 进而它将允许自旋等待持续相对更长的时间， 比如100个循环。 另外， 如果对于某个锁， 自旋很少成功获得过， 那在以后要获取这个锁时将可能省略掉自旋过程， 以避免浪费处理器资源。 有了自适应自旋， 随着程序运行和性能监控信息的不断完善， 虚拟机对程序锁的状况预测就会越来越准确， 虚拟机就会变得越来越“ 聪明” 了。</p> 
+<h3> <a id="锁消除" class="anchor" href="#%E9%94%81%E6%B6%88%E9%99%A4" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>锁消除</h3> 
+<p>锁消除是指虚拟机即时编译器在运行时， 对一些代码上要求同步， 但是被检测到不可能存在共享数据竞争的锁进行消除。 锁消除的主要判定依据来源于逃逸分析的数据支持 ， 如果判断在一段代码中， 堆上的所有数据都不会逃逸出去从而被其他线程访问到， 那就可以把它们当做栈上数据对待， 认为它们是线程私有的， 同步加锁自然就无须进行。</p> 
+<h3> <a id="锁粗化" class="anchor" href="#%E9%94%81%E7%B2%97%E5%8C%96" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>锁粗化</h3> 
+<p>如果虚拟机探测到有这样一串零碎的操作都对同一个对象加锁， 将会把加锁同步的范围扩展（ 粗化） 到整个操作序列的外部。</p> 
+<h3> <a id="锁的优缺点对比" class="anchor" href="#%E9%94%81%E7%9A%84%E4%BC%98%E7%BC%BA%E7%82%B9%E5%AF%B9%E6%AF%94" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>锁的优缺点对比</h3> 
+<p><a href="/images/2016-11/java_synchronized_07.png" target="_blank"><img src="/images/2016-11/java_synchronized_07.png" alt="" style="max-width:100%;" /></a></p> 
+<h2> <a id="参考" class="anchor" href="#%E5%8F%82%E8%80%83" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>参考</h2> 
+<p><a href="http://blog.csdn.net/aesop_wubo/article/details/7544148">JAVA并发编程学习笔记之synchronized</a> <a href="https://book.douban.com/subject/6522893/">深入理解Java虚拟机</a> <a href="https://read.douban.com/ebook/11771712/?dcs=book-search">Java并发编程的艺术</a></p>
+</body>
+</html>
