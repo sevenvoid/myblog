@@ -2,3 +2,5 @@ node_modules/
 .deploy_git/
 /.idea/
 /myblog.iml
+src/
+public/
