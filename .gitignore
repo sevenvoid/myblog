@@ -4,3 +4,5 @@ node_modules/
 /myblog.iml
 src/
 public/
+/.idea/vcs.xml
+/.idea/modules.xml
