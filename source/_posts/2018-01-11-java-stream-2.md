@@ -13,12 +13,12 @@ tags:
 ### 映射操作
 #### Map 函数
 Map映射函数的方法签名如下所示，它接受一个 mapper 行为参数，而 mapper 行为参数将会接受一个 T 类型的参数，并返回一个 R 类型的值：
-```
+```java
  <R> Stream<R> map(Function<? super T, ? extends R> mapper)
 ```
 理解Map映射函数的关键在于，参数 T 经过 mapper 行为参数映射后返回的 R 值将会被Map函数包装成`Stream<R>`值。继续上一篇提到的菜单列表例子，假如需要返回每项菜的名字，我们可以这样实现：
-```
-List<String> dishNames = menus.stream()
+```java
+    List<String> dishNames = menus.stream()
 		.map(dish -> dish.getName())   //此处map返回值为Stream<String>， dish来源于Stream<Dish>
 		.collect(Collectors.toList())
 ```
@@ -28,20 +28,20 @@ List<String> dishNames = menus.stream()
 
 #### FlatMap 函数
 FlatMap 函数的方法签名如下所示，它接受一个 mapper 行为参数，而 mapper 行为参数将会接受一个 T 类型的参数，并返回一个 `Stream<? extends R >` 类型的值：
-```
+```java
  <R> Stream<R> flatMap(Function<? super T, ? extends Stream<? extends R>> mapper)
 ```
 FlatMap 函数有点类似于 Map 函数，但是核心区别就在于它的 mapper 函数的返回值为 `Stream<? extends R >`，它返回后 flatMap 函数不会再将结果包装成`Stream<Stream<? extends R>>` 类型值。举个例子，假设有一个字符串列表`["Hello","World"]`，需要返回一个不包含重复字符的列表，我们可以这样实现：
-```
-List<String> distinctChars = words.stream()
+```java
+    List<String> distinctChars = words.stream()
 		.map(word -> word.split(" ")) //返回Stream<String[]>
 		.distinct()
 		.collect(Collectors.toList())
 ```
 很可惜，该写法将会得不到正确地结果，原因就在于map 函数返回的值为`Stream<String[]>`，而传递给 distinct 函数处理时，是处理的字符串数组类型`String[]`，并不是字符串类型，这个时候就需要使用 flatMap 函数，它能将`String[]`类型流化后再返回，即`Arrays.stream(String[])`后再返回。flatMap 函数是一个能将一个流元素映射成另一个包含多个元素的新流的具有副作用的函数，也即扁平化。
-```
-List<String> distinctChars = words.stream()
-		.flatMap(word -> word.split(" ")) //返回Stream<String>
+```java
+    List<String> distinctChars = words.stream()
+		.flatMap(word -> Arrays.stream(word.split(""))) //返回Stream<String>
 		.distinct()
 		.collect(Collectors.toList())
 ```
@@ -51,13 +51,13 @@ Map 和 FlatMap函数还有针对IntStream、DoubleStream、LongStream三种特�
 ### 归约操作
 #### Reduce 函数
 Reduce 函数成为归约操作，它能将流水线归约成一个非流的最终值，它有如下三种形式，其中 identity 为类型 T 的初始累积变量，accumulator 行为参数称为累加器，它接受两个参数，一个代表 identity 的累积变量，一个为流中的元素，并返回新的 identity，而 combiner 行为参数称为连接函数，在**并行处理**时，它能将identity1 和 identity2 这两个中间的累积变量连接起来生成最终的结果并返回：
-```
+```java
 T reduce(T identity, BinaryOperator<T> accumulator)
 Optional<T> reduce(BinaryOperator<T> accumulator)
 <U> U reduce(U identity,BiFunction<U, ? super T, U> accumulator,BinaryOperator<U> combiner)
 ```
 例如，假设需要返回菜单中所有菜品 calories 的总和，我们可以这样实现：
-```
+```java
 int sum = menus.stream().map(dish -> dish.getCalories())
 	.reduce(0, (a, b)-> a + b);
 
@@ -72,12 +72,12 @@ int sum3 = menus.parallelStream().map(-> dish.getCalories())
 ### 收集操作
 #### Collect 函数
 Collect 函数本质上是一个归约操作，区别就在于它是一个可变的归约操作，一般会将结果归约到一个可变的容器中，比如 ArrayList、Set等。第一种Collect 方法签名如下所示，它接受三个参数，第一个 supplier 行为参数将会产生一个 R 类型的可变容器； 第二个 accumulator 行为参数将会接受两个参数，第一个参数是 supplier 行为参数返回的可变容器，第二个参数是类型为 T的流中的元素，并返回一个 R 类型的可变容器；第三个 combiner 行为参数也会接收两个可变容器参数，并返回这两个可变容器的连接结果，其最终将会是 R 类型的可变容器中存放了 T 类型的元素：
-```
+```java
 <R> R collect(Supplier<R> supplier, BiConsumer<R,? super T> accumulator, BiConsumer<R,R> combiner)
 ```
 比如，假设需要返回菜品的名字列表，可以这样实现：
-```
-List<String> dishNames = menus.stream()
+```java
+    List<String> dishNames = menus.stream()
         .map(dish -> dish.getName)
         .collect(new ArrayList(),
         (list, name) -> list.add(name),
@@ -86,11 +86,11 @@ List<String> dishNames = menus.stream()
 注意在这种情况下，Collect 函数执行的特征为，IDENTITY_FINISH和 CONCURRENT但并非UNORDERED的收集器，在这种情况下，如果集合中的元素时有序的，将会顺序处理，如果是无序的集合将会并行处理。
 
 Collect 方法签名的第二种形式如下所示，它接收一个 Collector 参数：
-```
+```java
 <R,A> R collect(Collector<? super T,A,R> collector)
 ```
 Collector 参数是一个接口，它的最终语义是将会收集 T 类型的流中元素，并最终返回一个R类型的值（通常但不一定是集合），中间累加器的类型为 A，它的内容如下所示：
-```
+```java
 public interface Collector<T, A, R> {
         Supplier<A> supplier();
         BiConsumer<A, T> accumulator();
@@ -105,7 +105,7 @@ public interface Collector<T, A, R> {
 3. IDENTITY_FINISH——这表明完成器方法返回的函数是一个恒等函数，可以跳过。这种情况下，累加器对象将会直接用作归约过程的最终结果。这也意味着，将累加器A不加检查地转换为结果R是安全的。
 
 接着上面的例子，我们可以自定义一个 Collector 的实现，达到相同的结果：
-```
+```java
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.Collector;

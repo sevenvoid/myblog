@@ -1,8 +1,7 @@
 node_modules/
 .deploy_git/
-/.idea/
-/myblog.iml
+.idea/
+myblog.iml
 src/
 public/
-/.idea/vcs.xml
-/.idea/modules.xml
+package.json

@@ -10,7 +10,7 @@ tags:
 ---
 ### 流是什么
 流是Java 8 新出现的成员，它允许你以声明性方式处理数据集合(通过查询语句来表达，而不是临时编写一个实现，或者说是函数式风格处理流中的元素)，并且可以并行的处理。例如，假设有个菜单列表 (menus)，它包含诺干个菜品 (dish)，每个菜品都包含名字 (name)，卡路里量 (calories)，类型(type)，现在需要查询出只包含300以下卡路里且按照卡路里排序的所有菜品名字时，用Stream的实现方式如下所示：
-```
+```java
 	List<String> dishNames = menus.stream()
 			.filter(()-> dish.getCalories() < 300)
 			.sorted(comparing(Dish::getCalories))
@@ -46,7 +46,7 @@ Stream接口实现了AutoCloseable接口，但是几乎所有的流在使用后�
 
 #### 流的操作
 [java.util.strem.Stream](https://docs.oracle.com/javase/8/docs/api/java/util/stream/Stream.html) 类中提供了大量关于流的操作，主要如下所示：
-```
+```java
 **Intermediate operations** :
 Stream<T> filter(Predicate<? super T> predicate)
 <R> Stream<R> map(Function<? super T, ? extends R> mapper)
@@ -55,18 +55,18 @@ Stream<T> peek(Consumer<? super T> action)
 S sequential()
 S parallel()
 ```
-```
+```java
 **Stateful intermediate operations** :
 Stream<T> distinct()
 Stream<T> skip(long n)
 Stream<T> sorted()
 Stream<T> sorted(Comparator<? super T> comparator)
 ```
-```
+```java
 **Short-circuiting Stateful intermediate operations** :
 Stream<T> limit(long maxSize)
 ```
-```
+```java
 **Terminal operations** : 
 void forEach(Consumer<? super T> action)
 void forEachOrdered(Consumer<? super T> action)
@@ -82,7 +82,7 @@ long count()
 Spliterator<T> spliterator()
 Iterator<T> iterator()
 ```
-```
+```java
 **Short-circuiting terminal operations**:
 boolean allMatch(Predicate<? super T> predicate)
 boolean anyMath(Predicate<? super T> predicate)
