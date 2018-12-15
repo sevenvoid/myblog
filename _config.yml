@@ -76,5 +76,5 @@ disqus_shortname: sevenvoid
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
   type: git
-  repo: git@github.com:sevenvoid/sevenvoid.github.io.git
+  repo: https://github.com/sevenvoid/sevenvoid.github.io.git
   branch: master
